@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainQuest | Premium Quiz Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth_styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed', err));
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="logo">BrainQuest</div>
+            <div class="score-display" id="score-display" style="display: none;">Score: <span
+                    id="current-score">0</span>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div id="auth-container" class="auth-container">
+            <div class="auth-box" id="login-box">
+                <h2>Welcome Back</h2>
+                <p class="auth-subtitle">Login to continue your journey</p>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Log In</button>
+                </form>
+                <p class="auth-switch">Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+            </div>
+
+            <div class="auth-box hidden" id="signup-box">
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Join BrainQuest today</p>
+                <form id="signup-form">
+                    <div class="input-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Sign Up</button>
+                </form>
+                <p class="auth-switch">Already have an account? <a href="#" id="show-login">Log In</a></p>
+            </div>
+        </div>
+
+        <main id="main-content" style="display: none;">
+            <!-- Menu View -->
+            <section id="menu-view" class="view active">
+                <div class="hero-text">
+                    <h1>Challenge Your Intellect</h1>
+                    <p>Select a category to begin your journey.</p>
+                </div>
+                <div class="category-grid">
+                    <button class="category-card" data-category="gk">
+                        <div class="icon">🌍</div>
+                        <h3>General Knowledge</h3>
+                    </button>
+                    <button class="category-card" data-category="math">
+                        <div class="icon">📐</div>
+                        <h3>Mathematics</h3>
+                    </button>
+                    <button class="category-card" data-category="science">
+                        <div class="icon">🧬</div>
+                        <h3>Science</h3>
+                    </button>
+                    <button class="category-card" data-category="cs">
+                        <div class="icon">💻</div>
+                        <h3>Computer Science</h3>
+                    </button>
+                    <button class="category-card" data-category="english">
+                        <div class="icon">📚</div>
+                        <h3>English</h3>
+                    </button>
+                    <button class="category-card" data-category="geography">
+                        <div class="icon">🌏</div>
+                        <h3>Geography</h3>
+                    </button>
+                    <button class="category-card" data-category="biology">
+                        <div class="icon">🦠</div>
+                        <h3>Biology</h3>
+                    </button>
+                    <button class="category-card" data-category="physics">
+                        <div class="icon">⚛️</div>
+                        <h3>Physics</h3>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Level Selection View -->
+            <section id="level-view" class="view">
+                <div class="hero-text">
+                    <h1>Select Difficulty</h1>
+                    <p>Choose your challenge level.</p>
+                </div>
+                <div class="level-grid">
+                    <button class="level-card" data-level="easy">
+                        <div class="icon">🟢</div>
+                        <h3>Easy</h3>
+                    </button>
+                    <button class="level-card" data-level="medium">
+                        <div class="icon">🟡</div>
+                        <h3>Medium</h3>
+                    </button>
+                    <button class="level-card" data-level="hard">
+                        <div class="icon">🔴</div>
+                        <h3>Hard</h3>
+                    </button>
+                </div>
+                <button id="back-to-categories-btn" class="btn-secondary" style="margin-top: 2rem;">Back to
+                    Categories</button>
+            </section>
+
+            <!-- Quiz View -->
+            <section id="quiz-view" class="view">
+                <div class="quiz-header">
+                    <button id="back-to-menu-btn" class="icon-btn" title="Back to Menu">← Back</button>
+                    <div class="timer-display" id="timer-display">00:00</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="question-container">
+                    <h2 id="question-text">Question goes here?</h2>
+                    <div class="options-grid" id="options-container">
+                        <!-- Options will be injected here -->
+                    </div>
+                </div>
+                <div class="feedback-message" id="feedback-message"></div>
+            </section>
+
+            <!-- Results View -->
+            <section id="results-view" class="view">
+                <div class="results-content">
+                    <h2>Quiz Completed!</h2>
+                    <div class="final-score">
+                        <span id="final-score-value">0</span> / <span id="total-questions">10</span>
+                    </div>
+                    <p id="result-message">Great job!</p>
+                    <div class="percentage" id="percentage-display">0%</div>
+                    <div class="time-taken" id="time-taken-display"
+                        style="margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-secondary);">
+                        Time Taken: 00:00</div>
+                    <button id="restart-btn" class="btn-primary">Back to Menu</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 BrainQuest. Designed for Excellence.</p>
+        </footer>
+    </div>
+    <script src="auth_logic.js"></script>
+    <script src="quiz_data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

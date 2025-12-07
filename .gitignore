@@ -1,22 +1,13 @@
-helllo.exe
-game.exe
-a.exe
-build/Debug/helloworld.o
-build/Debug/outDebug.exe
-dark_bar.png
-.vscode/c_cpp_properties.json
- student.txt
-.vscode/launch.json
-.vscode/tasks.json
-.vscode/settings.json
-demo.py
-game.c
+
+# .gitignore
+*.exe
+*.o
+*.obj
+.vscode/
+tempCodeRunnerFile*
+__pycache__/
+*.pyc
+*.c
+student.txt
 text.txt
-truffles.png
-hero.png
-helloworld.exe
-helloworld.c
-helloworld.c
-helloworld.c
-*.c
-*.c
+demo.py
