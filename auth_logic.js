@@ -11,7 +11,7 @@ const showLoginBtn = document.getElementById('show-login');
 
 // Check Auth State on Load
 function checkAuth() {
-    const user = localStorage.getItem('currentUser');
+    const user = localStorage.getItem('currentUser'); // We still keep session in LS for now
     if (user) {
         showApp();
     } else {
@@ -19,71 +19,63 @@ function checkAuth() {
     }
 }
 
-function showApp() {
-    authContainer.style.display = 'none';
-    mainContent.style.display = 'block';
-    // Optional: Update UI with user name
-}
-
-function showAuth() {
-    authContainer.style.display = 'flex';
-    mainContent.style.display = 'none';
-}
-
-// Switch Forms
-showSignupBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loginBox.classList.add('hidden');
-    signupBox.classList.remove('hidden');
-});
-
-showLoginBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    signupBox.classList.add('hidden');
-    loginBox.classList.remove('hidden');
-});
+// ... existing UI functions ...
 
 // Handle Signup
-signupForm.addEventListener('submit', (e) => {
+signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('signup-name').value;
     const email = document.getElementById('signup-email').value;
     const password = document.getElementById('signup-password').value;
 
-    if (localStorage.getItem(`user_${email}`)) {
-        alert('User already exists! Please login.');
-        return;
+    try {
+        const response = await fetch('http://localhost:3000/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('Account created successfully! Please login.');
+            signupBox.classList.add('hidden');
+            loginBox.classList.remove('hidden');
+            signupForm.reset();
+        } else {
+            alert(data.error || 'Signup failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to connect to server');
     }
-
-    const user = { name, email, password };
-    localStorage.setItem(`user_${email}`, JSON.stringify(user));
-    alert('Account created successfully! Please login.');
-
-    // Switch to login
-    signupBox.classList.add('hidden');
-    loginBox.classList.remove('hidden');
-    signupForm.reset();
 });
 
 // Handle Login
-loginForm.addEventListener('submit', (e) => {
+loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
-    const storedUser = localStorage.getItem(`user_${email}`);
+    try {
+        const response = await fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
 
-    if (storedUser) {
-        const user = JSON.parse(storedUser);
-        if (user.password === password) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('currentUser', JSON.stringify(data.user)); // Store user session
             showApp();
             loginForm.reset();
         } else {
-            alert('Invalid password!');
+            alert(data.error || 'Login failed');
         }
-    } else {
-        alert('User not found! Please sign up.');
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to connect to server');
     }
 });
 
