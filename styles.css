@@ -325,12 +325,35 @@ header {
 }
 
 .feedback-message {
-    margin-top: 2rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    min-height: 2rem;
+    margin-top: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    min-height: 3rem;
     text-align: center;
     letter-spacing: 0.02em;
+    padding: 1rem;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feedback-message.success {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid var(--success-color);
+    color: var(--success-color);
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+}
+
+.feedback-message.error {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
 }
 
 /* Results View */

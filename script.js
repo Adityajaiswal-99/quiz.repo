@@ -200,7 +200,7 @@ function checkAnswer(selectedIndex, selectedBtn) {
         playSound(true);
         selectedBtn.classList.add('correct');
         feedbackMessage.textContent = "Correct Answer! / सही उत्तर!";
-        feedbackMessage.style.color = 'var(--success-color)';
+        feedbackMessage.className = 'feedback-message success'; // Add success class
         score++;
         updateScore();
     } else {
@@ -209,8 +209,8 @@ function checkAnswer(selectedIndex, selectedBtn) {
         buttons[correctIndex].classList.add('correct');
         const correctOption = currentQuestions[currentQuestionIndex].options[correctIndex];
         const correctOptionHi = currentQuestions[currentQuestionIndex].options_hi[correctIndex];
-        feedbackMessage.textContent = `Wrong! Correct: ${correctOption} (${correctOptionHi})`;
-        feedbackMessage.style.color = 'var(--error-color)';
+        feedbackMessage.innerHTML = `Wrong! Correct:<br><strong>${correctOption}</strong><br><span style="font-size: 0.9em">${correctOptionHi}</span>`;
+        feedbackMessage.className = 'feedback-message error'; // Add error class
     }
 
     // Wait and go to next question
