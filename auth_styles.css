@@ -3,15 +3,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 60vh;
+    min-height: 80vh;
+    /* Increased height for better centering on mobile */
     width: 100%;
+    padding: 1rem;
+    /* Add padding to prevent edge touching */
 }
 
 .auth-box {
     background: var(--card-bg);
     backdrop-filter: blur(10px);
-    padding: 2.5rem;
-    border-radius: 20px;
+    padding: 2rem;
+    /* Slightly reduced padding */
+    border-radius: 24px;
+    /* More rounded corners */
     border: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
     max-width: 400px;
@@ -66,7 +71,10 @@
 
 .btn-primary.full-width {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    /* More space above button */
+    padding: 1.1rem;
+    /* Taller button for easier tapping */
 }
 
 .auth-switch {
