@@ -15,7 +15,7 @@ app.use(express.static('.')); // Serve static files from current directory
 const db = mysql.createPool({
     host: 'localhost',
     user: 'root', // Default XAMPP/MySQL user
-    password: '', // Default is empty, user might need to change
+    password: 'aditya9316038680', // Default is empty, user might need to change
     database: 'quiz_db',
     waitForConnections: true,
     connectionLimit: 10,

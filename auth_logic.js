@@ -19,7 +19,34 @@ function checkAuth() {
     }
 }
 
-// ... existing UI functions ...
+function showApp() {
+    authContainer.style.display = 'none';
+    mainContent.style.display = 'block';
+}
+
+function showAuth() {
+    authContainer.style.display = 'flex';
+    mainContent.style.display = 'none';
+}
+
+// Switch Forms
+if (showSignupBtn) {
+    showSignupBtn.addEventListener('click', (e) => {
+        console.log('Signup clicked');
+        e.preventDefault();
+        loginBox.classList.add('hidden');
+        signupBox.classList.remove('hidden');
+    });
+}
+
+if (showLoginBtn) {
+    showLoginBtn.addEventListener('click', (e) => {
+        console.log('Login clicked');
+        e.preventDefault();
+        signupBox.classList.add('hidden');
+        loginBox.classList.remove('hidden');
+    });
+}
 
 // Handle Signup
 signupForm.addEventListener('submit', async (e) => {
