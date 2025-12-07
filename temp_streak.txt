@@ -1,0 +1,8 @@
+function updateStreak() {
+    if (currentStreak >= 2) {
+        streakCounter.style.display = 'block';
+        streakValue.textContent = currentStreak;
+    } else {
+        streakCounter.style.display = 'none';
+    }
+}

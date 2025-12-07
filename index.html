@@ -33,6 +33,12 @@
             </div>
         </header>
 
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p>Loading Quiz...</p>
+        </div>
+
         <!-- Main Content Area -->
         <div id="auth-container" class="auth-container">
             <div class="auth-box" id="login-box">
@@ -115,6 +121,38 @@
                         <h3>Physics</h3>
                     </button>
                 </div>
+
+                <!-- Settings Section -->
+                <div class="settings-section">
+                    <h2>Quiz Settings</h2>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <div class="setting-icon">⏱️</div>
+                            <div class="setting-info">
+                                <h3>Timer</h3>
+                                <p>Enable countdown timer</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="timer-toggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-card">
+                            <div class="setting-icon">🔢</div>
+                            <div class="setting-info">
+                                <h3>Questions</h3>
+                                <p>Number of questions</p>
+                            </div>
+                            <select id="question-count-select" class="setting-select">
+                                <option value="5">5 Questions</option>
+                                <option value="10" selected>10 Questions</option>
+                                <option value="15">15 Questions</option>
+                                <option value="20">20 Questions</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Level Selection View -->
@@ -145,6 +183,15 @@
             <section id="quiz-view" class="view">
                 <div class="quiz-header">
                     <button id="back-to-menu-btn" class="icon-btn" title="Back to Menu">← Back</button>
+                    <div class="quiz-stats">
+                        <div id="question-tracker" class="question-tracker">1 / 10</div>
+                        <div id="streak-counter" class="streak-counter" style="display: none;">
+                            🔥 <span id="streak-value">0</span>
+                        </div>
+                        <div id="live-score" class="live-score">
+                            Score: <span id="live-score-value">0</span>
+                        </div>
+                    </div>
                     <div class="timer-display" id="timer-display">00:00</div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
@@ -168,10 +215,44 @@
                     </div>
                     <p id="result-message">Great job!</p>
                     <div class="percentage" id="percentage-display">0%</div>
+
+                    <!-- Detailed Breakdown -->
+                    <div class="score-breakdown">
+                        <div class="breakdown-item">
+                            <span class="breakdown-icon">✅</span>
+                            <span class="breakdown-label">Correct</span>
+                            <span class="breakdown-value" id="correct-count">0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-icon">❌</span>
+                            <span class="breakdown-label">Wrong</span>
+                            <span class="breakdown-value" id="wrong-count">0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-icon">📊</span>
+                            <span class="breakdown-label">Accuracy</span>
+                            <span class="breakdown-value" id="accuracy-display">0%</span>
+                        </div>
+                    </div>
+
                     <div class="time-taken" id="time-taken-display"
                         style="margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-secondary);">
                         Time Taken: 00:00</div>
-                    <button id="restart-btn" class="btn-primary">Back to Menu</button>
+                    <div class="result-buttons">
+                        <button id="review-btn" class="btn-secondary">Review Answers</button>
+                        <button id="restart-btn" class="btn-primary">Back to Menu</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Review View -->
+            <section id="review-view" class="view">
+                <div class="review-header">
+                    <h2>Review Answers</h2>
+                    <button id="close-review-btn" class="icon-btn">✕ Close</button>
+                </div>
+                <div id="review-list" class="review-list">
+                    <!-- Review items injected here -->
                 </div>
             </section>
         </main>

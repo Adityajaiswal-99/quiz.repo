@@ -4,6 +4,8 @@ let currentLevel = null;
 let currentQuestionIndex = 0;
 let score = 0;
 let currentQuestions = [];
+let userAnswers = [];
+let currentStreak = 0;
 let timer;
 let secondsElapsed = 0;
 
@@ -26,6 +28,18 @@ const backToMenuBtn = document.getElementById('back-to-menu-btn');
 const backToCategoriesBtn = document.getElementById('back-to-categories-btn');
 const timerDisplay = document.getElementById('timer-display');
 const timeTakenDisplay = document.getElementById('time-taken-display');
+const loadingOverlay = document.getElementById('loading-overlay');
+const questionTracker = document.getElementById('question-tracker');
+const questionCountSelect = document.getElementById('question-count-select');
+const timerToggle = document.getElementById('timer-toggle');
+
+const reviewView = document.getElementById('review-view');
+const reviewList = document.getElementById('review-list');
+const reviewBtn = document.getElementById('review-btn');
+const closeReviewBtn = document.getElementById('close-review-btn');
+const streakCounter = document.getElementById('streak-counter');
+const streakValue = document.getElementById('streak-value');
+const liveScoreValue = document.getElementById('live-score-value');
 
 // Event Listeners
 document.querySelectorAll('.category-card').forEach(card => {
@@ -45,6 +59,40 @@ backToMenuBtn.addEventListener('click', showMenu);
 if (backToCategoriesBtn) {
     backToCategoriesBtn.addEventListener('click', showMenu);
 }
+if (reviewBtn) {
+    reviewBtn.addEventListener('click', showReview);
+}
+if (closeReviewBtn) {
+    closeReviewBtn.addEventListener('click', () => {
+        reviewView.classList.remove('active');
+        resultsView.classList.add('active');
+    });
+}
+
+// Load user preferences from localStorage
+function loadPreferences() {
+    const savedTimer = localStorage.getItem('timerEnabled');
+    const savedQuestionCount = localStorage.getItem('questionCount');
+
+    if (savedTimer !== null) {
+        timerToggle.checked = savedTimer === 'true';
+    }
+    if (savedQuestionCount) {
+        questionCountSelect.value = savedQuestionCount;
+    }
+}
+
+// Save preferences when changed
+questionCountSelect.addEventListener('change', () => {
+    localStorage.setItem('questionCount', questionCountSelect.value);
+});
+
+timerToggle.addEventListener('change', () => {
+    localStorage.setItem('timerEnabled', timerToggle.checked);
+});
+
+// Load preferences on page load
+loadPreferences();
 
 function showLevelSelection(category) {
     currentCategory = category;
@@ -73,31 +121,61 @@ function shuffleArray(array) {
 function startQuiz(level) {
     try {
         console.log("Starting quiz for level:", level);
-        currentLevel = level;
-        currentQuestionIndex = 0;
-        score = 0;
-        secondsElapsed = 0;
 
-        // Get questions for the selected category and level
-        // quizData is defined in quiz_data.js and available globally
-        if (typeof quizData !== 'undefined' && quizData[currentCategory] && quizData[currentCategory][currentLevel]) {
-            currentQuestions = shuffleArray([...quizData[currentCategory][currentLevel]]);
-            console.log("Questions loaded:", currentQuestions.length);
-        } else {
-            console.error("No questions found for category:", currentCategory, "level:", currentLevel);
-            alert("Error loading questions. Please try another category.");
-            showMenu();
-            return;
-        }
+        // Show Loading
+        loadingOverlay.classList.remove('hidden');
 
-        levelView.classList.remove('active');
-        quizView.classList.add('active');
-        scoreDisplay.style.display = 'block';
-        updateScore();
-        startTimer();
-        loadQuestion();
+        // Simulate small delay for better UX (or fetch if we were async)
+        setTimeout(() => {
+            currentLevel = level;
+            currentQuestionIndex = 0;
+            score = 0;
+            currentLevel = level;
+            currentQuestionIndex = 0;
+            score = 0;
+            secondsElapsed = 0;
+            userAnswers = [];
+            currentStreak = 0;
+
+
+            // Get questions for the selected category and level
+            if (typeof quizData !== 'undefined' && quizData[currentCategory] && quizData[currentCategory][currentLevel]) {
+                // Shuffle and limit questions based on settings
+                const fullQuestions = shuffleArray([...quizData[currentCategory][currentLevel]]);
+                const limit = parseInt(questionCountSelect.value) || 10;
+                currentQuestions = fullQuestions.slice(0, limit);
+
+                console.log(`Questions loaded: ${currentQuestions.length} (Limit: ${limit})`);
+
+                loadingOverlay.classList.add('hidden');
+                levelView.classList.remove('active');
+                quizView.classList.add('active');
+                scoreDisplay.style.display = 'block';
+
+                updateScore();
+
+                // Timer Logic
+                if (timerToggle.checked) {
+                    timerDisplay.style.display = 'block';
+                    startTimer();
+                } else {
+                    timerDisplay.style.display = 'none';
+                    stopTimer();
+                }
+
+                loadQuestion();
+            } else {
+                loadingOverlay.classList.add('hidden');
+                console.error("No questions found for category:", currentCategory, "level:", currentLevel);
+                // Simple UI error feedback could be expanded here, for now alerting but safer
+                alert("Error loading questions. Please try another category.");
+                showMenu();
+            }
+        }, 600); // 600ms artificial delay for "loading" feel
+
     } catch (error) {
         console.error("Error in startQuiz:", error);
+        loadingOverlay.classList.add('hidden');
         alert("An error occurred: " + error.message);
     }
 }
@@ -137,6 +215,11 @@ function loadQuestion() {
     // Update progress bar
     const progress = ((currentQuestionIndex) / currentQuestions.length) * 100;
     progressFill.style.width = `${progress}%`;
+
+    // Update Question Tracker
+    if (questionTracker) {
+        questionTracker.textContent = `${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+    }
 
     questionData.options.forEach((option, index) => {
         const btn = document.createElement('button');
@@ -196,13 +279,22 @@ function checkAnswer(selectedIndex, selectedBtn) {
 
     const correctIndex = currentQuestions[currentQuestionIndex].answer;
 
+    // Save for review
+    userAnswers.push({
+        question: currentQuestions[currentQuestionIndex],
+        selected: selectedIndex,
+        correct: correctIndex
+    });
+
     if (selectedIndex === correctIndex) {
         playSound(true);
         selectedBtn.classList.add('correct');
         feedbackMessage.textContent = "Correct Answer! / सही उत्तर!";
         feedbackMessage.className = 'feedback-message success'; // Add success class
         score++;
+        currentStreak++;
         updateScore();
+        updateStreak();
     } else {
         playSound(false);
         selectedBtn.classList.add('wrong');
@@ -211,14 +303,17 @@ function checkAnswer(selectedIndex, selectedBtn) {
         const correctOptionHi = currentQuestions[currentQuestionIndex].options_hi[correctIndex];
         feedbackMessage.innerHTML = `Wrong! Correct:<br><strong>${correctOption}</strong><br><span style="font-size: 0.9em">${correctOptionHi}</span>`;
         feedbackMessage.className = 'feedback-message error'; // Add error class
+        currentStreak = 0;
+        updateStreak();
     }
 
     // Wait and go to next question
     setTimeout(() => {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < currentQuestions.length) {
+        if (currentQuestionIndex < currentQuestions.length - 1) {
+            currentQuestionIndex++;
             loadQuestion();
         } else {
+            currentQuestionIndex++;
             showResults();
         }
     }, 2500);
@@ -226,6 +321,9 @@ function checkAnswer(selectedIndex, selectedBtn) {
 
 function updateScore() {
     currentScoreSpan.textContent = score;
+    if (liveScoreValue) {
+        liveScoreValue.textContent = score;
+    }
 }
 
 function showResults() {
@@ -241,15 +339,97 @@ function showResults() {
     const percentage = (score / total) * 100;
     percentageDisplay.textContent = `${percentage.toFixed(0)}%`;
 
+    // Populate breakdown
+    const wrongCount = total - score;
+    document.getElementById('correct-count').textContent = score;
+    document.getElementById('wrong-count').textContent = wrongCount;
+    document.getElementById('accuracy-display').textContent = `${percentage.toFixed(0)}%`;
+
     if (timeTakenDisplay) {
-        timeTakenDisplay.textContent = `Time Taken: ${formatTime(secondsElapsed)}`;
+        if (timerToggle.checked) {
+            timeTakenDisplay.style.display = 'block';
+            timeTakenDisplay.textContent = `Time Taken: ${formatTime(secondsElapsed)}`;
+        } else {
+            timeTakenDisplay.style.display = 'none';
+        }
     }
 
     if (percentage >= 80) {
         resultMessage.textContent = "Outstanding! You're a genius! 🌟 / बहुत बढ़िया! आप एक प्रतिभाशाली हैं!";
+        triggerConfetti();
     } else if (percentage >= 60) {
         resultMessage.textContent = "Great job! Keep it up! 👍 / बहुत अच्छा! इसे जारी रखो!";
     } else {
         resultMessage.textContent = "Good effort! Try again to improve. 💪 / अच्छा प्रयास! सुधारने के लिए फिर से प्रयास करें।";
+    }
+}
+
+function triggerConfetti() {
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+        // Confetti colors
+        const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+
+        for (let i = 0; i < 3; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 0.5 + 's';
+            document.body.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 3000);
+        }
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
+}
+
+function showReview() {
+    resultsView.classList.remove('active');
+    reviewView.classList.add('active');
+    reviewList.innerHTML = '';
+
+    userAnswers.forEach((answer, index) => {
+        const item = document.createElement('div');
+        item.className = `review-item ${answer.selected === answer.correct ? 'correct' : 'wrong'}`;
+
+        const isCorrect = answer.selected === answer.correct;
+        const selectedText = answer.question.options[answer.selected];
+        const correctText = answer.question.options[answer.correct];
+        const questionText = answer.question.q;
+        const questionTextHi = answer.question.q_hi;
+
+        item.innerHTML = `
+            <div class="review-q-num">Question ${index + 1}</div>
+            <div class="review-q-text">
+                ${questionText}
+                <br><span class="hindi-text">${questionTextHi}</span>
+            </div>
+            <div class="review-status">${isCorrect ? '✅ Correct' : '❌ Wrong'}</div>
+            <div class="review-details">
+                <div class="review-detail-row">
+                    <span class="label">Your Answer:</span>
+                    <span class="value ${isCorrect ? 'correct-text' : 'wrong-text'}">${selectedText}</span>
+                </div>
+                ${!isCorrect ? `
+                <div class="review-detail-row">
+                    <span class="label">Correct Answer:</span>
+                    <span class="value correct-text">${correctText}</span>
+                </div>` : ''}
+            </div>
+        `;
+        reviewList.appendChild(item);
+    });
+} function updateStreak() {
+    if (currentStreak >= 2) {
+        streakCounter.style.display = 'block';
+        streakValue.textContent = currentStreak;
+    } else {
+        streakCounter.style.display = 'none';
     }
 }
