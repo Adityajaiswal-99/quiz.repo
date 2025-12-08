@@ -247,6 +247,40 @@ function loadQuestion() {
     });
 }
 
+// Simple Audio Feedback (original working version)
+function playSound(isCorrect) {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (isCorrect) {
+            // Correct sound: pleasant tone
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(1046.5, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        } else {
+            // Wrong sound: lower tone
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+            oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+    } catch (error) {
+        // Silently fail if audio context not supported
+    }
+}
+
 function checkAnswer(selectedIndex, selectedBtn) {
     // Disable all buttons
     const buttons = optionsContainer.querySelectorAll('.option-btn');
@@ -488,10 +522,9 @@ function shareResults() {
     }
 }
 // Sound System using Web Audio API
-// DISABLED - causing issues
-let soundEnabled = false; // Sounds disabled until fixed
+// Using original simple version - Phase 6 advanced version removed
 
-// Sound toggle
+// Sound toggle - keeping for future use
 const soundToggle = document.getElementById('sound-toggle');
 const darkModeToggle = document.getElementById('dark-mode-toggle');
 const badgesBtn = document.getElementById('badges-btn');
@@ -543,55 +576,7 @@ function saveBadges() {
     localStorage.setItem('badges', JSON.stringify(badgeData));
 }
 
-// Play sound function
-function playSound(type) {
-    if (!soundEnabled) return;
-
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    // Different sounds for different events
-    switch (type) {
-        case 'correct':
-            oscillator.frequency.value = 800;
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-            oscillator.stop(audioContext.currentTime + 0.3);
-            break;
-        case 'wrong':
-            oscillator.frequency.value = 200;
-            oscillator.type = 'sawtooth';
-            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-            oscillator.stop(audioContext.currentTime + 0.2);
-            break;
-        case 'complete':
-            // Celebratory chord
-            [523, 659, 784].forEach((freq, i) => {
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.1);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.5);
-                osc.start(audioContext.currentTime + i * 0.1);
-                osc.stop(audioContext.currentTime + i * 0.1 + 0.5);
-            });
-            return;
-        case 'click':
-            oscillator.frequency.value = 400;
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-            oscillator.stop(audioContext.currentTime + 0.1);
-            break;
-    }
-
-    oscillator.start();
-}
+// Phase 6 playSound removed - using original simple version above checkAnswer
 
 // Check and award badges
 function checkBadges(quizData) {
