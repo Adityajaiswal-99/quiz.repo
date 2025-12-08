@@ -40,6 +40,12 @@ const closeReviewBtn = document.getElementById('close-review-btn');
 const streakCounter = document.getElementById('streak-counter');
 const streakValue = document.getElementById('streak-value');
 const liveScoreValue = document.getElementById('live-score-value');
+const errorContainer = document.getElementById('error-container');
+const errorTitle = document.getElementById('error-title');
+const errorMessage = document.getElementById('error-message');
+const retryBtn = document.getElementById('retry-btn');
+const shareBtn = document.getElementById('share-btn');
+const highScoreBadge = document.getElementById('high-score-badge');
 
 // Event Listeners
 document.querySelectorAll('.category-card').forEach(card => {
@@ -67,6 +73,12 @@ if (closeReviewBtn) {
         reviewView.classList.remove('active');
         resultsView.classList.add('active');
     });
+}
+if (retryBtn) {
+    retryBtn.addEventListener('click', retryQuiz);
+}
+if (shareBtn) {
+    shareBtn.addEventListener('click', shareResults);
 }
 
 // Load user preferences from localStorage
@@ -167,16 +179,14 @@ function startQuiz(level) {
             } else {
                 loadingOverlay.classList.add('hidden');
                 console.error("No questions found for category:", currentCategory, "level:", currentLevel);
-                // Simple UI error feedback could be expanded here, for now alerting but safer
-                alert("Error loading questions. Please try another category.");
-                showMenu();
+                showError("No Questions Available", `We couldn't find any questions for ${currentCategory} (${currentLevel}). Please try another category or difficulty.`);
             }
         }, 600); // 600ms artificial delay for "loading" feel
 
     } catch (error) {
         console.error("Error in startQuiz:", error);
         loadingOverlay.classList.add('hidden');
-        alert("An error occurred: " + error.message);
+        showError("Oops! Something went wrong", error.message || "An unexpected error occurred. Please try again.");
     }
 }
 
@@ -339,6 +349,17 @@ function showResults() {
     const percentage = (score / total) * 100;
     percentageDisplay.textContent = `${percentage.toFixed(0)}%`;
 
+    // Check and update high score
+    const highScoreKey = `highScore_${currentCategory}_${currentLevel}`;
+    const previousHighScore = parseInt(localStorage.getItem(highScoreKey)) || 0;
+
+    if (score > previousHighScore) {
+        localStorage.setItem(highScoreKey, score);
+        highScoreBadge.classList.remove('hidden');
+    } else {
+        highScoreBadge.classList.add('hidden');
+    }
+
     // Populate breakdown
     const wrongCount = total - score;
     document.getElementById('correct-count').textContent = score;
@@ -431,5 +452,56 @@ function showReview() {
         streakValue.textContent = currentStreak;
     } else {
         streakCounter.style.display = 'none';
+    }
+}
+
+function showError(title, message) {
+    // Hide quiz elements
+    questionText.parentElement.style.display = 'none';
+
+    // Show error container
+    errorTitle.textContent = title;
+    errorMessage.textContent = message;
+    errorContainer.classList.remove('hidden');
+}
+
+function retryQuiz() {
+    // Hide error, reset state
+    errorContainer.classList.add('hidden');
+    questionText.parentElement.style.display = 'block';
+
+    // Retry starting the quiz
+    if (currentLevel) {
+        startQuiz(currentLevel);
+    } else {
+        showMenu();
+    }
+}
+
+function shareResults() {
+    const total = currentQuestions.length;
+    const percentage = ((score / total) * 100).toFixed(0);
+
+    const shareText = `🎯 BrainQuest Results!\n\nCategory: ${currentCategory.toUpperCase()}\nDifficulty: ${currentLevel.toUpperCase()}\nScore: ${score}/${total} (${percentage}%)\n\nCan you beat my score? 🚀`;
+
+    // Try native Web Share API
+    if (navigator.share) {
+        navigator.share({
+            title: 'BrainQuest Results',
+            text: shareText
+        }).catch(err => console.log('Share cancelled', err));
+    } else {
+        // Fallback: Copy to clipboard
+        navigator.clipboard.writeText(shareText).then(() => {
+            // Show temporary feedback
+            const originalText = shareBtn.textContent;
+            shareBtn.textContent = '✅ Copied!';
+            setTimeout(() => {
+                shareBtn.textContent = originalText;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy', err);
+            alert('Share text:\n\n' + shareText);
+        });
     }
 }

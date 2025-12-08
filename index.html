@@ -203,6 +203,15 @@
                         <!-- Options will be injected here -->
                     </div>
                 </div>
+
+                <!-- Error Container -->
+                <div id="error-container" class="error-container hidden">
+                    <div class="error-icon">⚠️</div>
+                    <h3 id="error-title">Oops! Something went wrong</h3>
+                    <p id="error-message">We couldn't load the questions.</p>
+                    <button id="retry-btn" class="btn-primary">🔄 Try Again</button>
+                </div>
+
                 <div class="feedback-message" id="feedback-message"></div>
             </section>
 
@@ -210,6 +219,12 @@
             <section id="results-view" class="view">
                 <div class="results-content">
                     <h2>Quiz Completed!</h2>
+
+                    <!-- High Score Badge -->
+                    <div id="high-score-badge" class="high-score-badge hidden">
+                        🏆 New High Score!
+                    </div>
+
                     <div class="final-score">
                         <span id="final-score-value">0</span> / <span id="total-questions">10</span>
                     </div>
@@ -239,6 +254,7 @@
                         style="margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-secondary);">
                         Time Taken: 00:00</div>
                     <div class="result-buttons">
+                        <button id="share-btn" class="btn-secondary">📤 Share Results</button>
                         <button id="review-btn" class="btn-secondary">Review Answers</button>
                         <button id="restart-btn" class="btn-primary">Back to Menu</button>
                     </div>
