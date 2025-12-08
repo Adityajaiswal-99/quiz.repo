@@ -1,0 +1,40 @@
+
+/* Badge Notification */
+.badge-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.badge-notification.show {
+    transform: translateX(0);
+}
+
+.badge-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.badge-notification-icon {
+    font-size: 3rem;
+}
+
+.badge-notification-title {
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.2rem;
+}
+
+.badge-notification-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+}

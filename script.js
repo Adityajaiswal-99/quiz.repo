@@ -383,6 +383,24 @@ function showResults() {
     } else {
         resultMessage.textContent = "Good effort! Try again to improve. 💪 / अच्छा प्रयास! सुधारने के लिए फिर से प्रयास करें।";
     }
+
+    // Play completion sound
+    playSound('complete');
+
+    // Check for badges
+    const maxStreak = Math.max(...userAnswers.map((_, i) => {
+        let streak = 0;
+        for (let j = i; j < userAnswers.length && userAnswers[j].isCorrect; j++) {
+            streak++;
+        }
+        return streak;
+    }));
+
+    checkBadges({
+        percentage: percentage,
+        timeTaken: secondsElapsed,
+        maxStreak: maxStreak
+    });
 }
 
 function triggerConfetti() {
@@ -505,3 +523,239 @@ function shareResults() {
         });
     }
 }
+// Sound System using Web Audio API
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let soundEnabled = true;
+
+// Sound toggle
+const soundToggle = document.getElementById('sound-toggle');
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const badgesBtn = document.getElementById('badges-btn');
+const badgesModal = document.getElementById('badges-modal');
+const closeBadgesModal = document.getElementById('close-badges-modal');
+const badgesGrid = document.getElementById('badges-grid');
+const leaderboardModal = document.getElementById('leaderboard-modal');
+const closeLeaderboardModal = document.getElementById('close-leaderboard-modal');
+
+// Badge definitions
+const BADGES = [
+    { id: 'perfect', name: 'Perfect Score', icon: '💯', description: 'Get 100% on any quiz', earned: false },
+    { id: 'speed', name: 'Speed Demon', icon: '⚡', description: 'Complete quiz in under 1 minute', earned: false },
+    { id: 'streak', name: 'Streak Master', icon: '🔥', description: 'Get 5+ correct in a row', earned: false },
+    { id: 'scholar', name: 'Scholar', icon: '🎓', description: 'Complete 10 quizzes', earned: false }
+];
+
+// Load saved badges and sound preference
+function loadGameData() {
+    const savedBadges = localStorage.getItem('badges');
+    if (savedBadges) {
+        const badgeData = JSON.parse(savedBadges);
+        BADGES.forEach(badge => {
+            if (badgeData[badge.id]) {
+                badge.earned = true;
+            }
+        });
+    }
+
+    const savedSound = localStorage.getItem('soundEnabled');
+    if (savedSound !== null) {
+        soundEnabled = savedSound === 'true';
+        soundToggle.checked = soundEnabled;
+    }
+
+    // Load dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+}
+
+// Save badges
+function saveBadges() {
+    const badgeData = {};
+    BADGES.forEach(badge => {
+        badgeData[badge.id] = badge.earned;
+    });
+    localStorage.setItem('badges', JSON.stringify(badgeData));
+}
+
+// Play sound function
+function playSound(type) {
+    if (!soundEnabled) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Different sounds for different events
+    switch (type) {
+        case 'correct':
+            oscillator.frequency.value = 800;
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            oscillator.stop(audioContext.currentTime + 0.3);
+            break;
+        case 'wrong':
+            oscillator.frequency.value = 200;
+            oscillator.type = 'sawtooth';
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            oscillator.stop(audioContext.currentTime + 0.2);
+            break;
+        case 'complete':
+            // Celebratory chord
+            [523, 659, 784].forEach((freq, i) => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.5);
+                osc.start(audioContext.currentTime + i * 0.1);
+                osc.stop(audioContext.currentTime + i * 0.1 + 0.5);
+            });
+            return;
+        case 'click':
+            oscillator.frequency.value = 400;
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            oscillator.stop(audioContext.currentTime + 0.1);
+            break;
+    }
+
+    oscillator.start();
+}
+
+// Check and award badges
+function checkBadges(quizData) {
+    let newBadges = [];
+
+    // Perfect Score
+    if (quizData.percentage === 100 && !BADGES[0].earned) {
+        BADGES[0].earned = true;
+        newBadges.push(BADGES[0]);
+    }
+
+    // Speed Demon (under 60 seconds)
+    if (quizData.timeTaken < 60 && !BADGES[1].earned) {
+        BADGES[1].earned = true;
+        newBadges.push(BADGES[1]);
+    }
+
+    // Streak Master
+    if (quizData.maxStreak >= 5 && !BADGES[2].earned) {
+        BADGES[2].earned = true;
+        newBadges.push(BADGES[2]);
+    }
+
+    // Scholar (10 quizzes completed)
+    const quizCount = parseInt(localStorage.getItem('quizCount') || '0') + 1;
+    localStorage.setItem('quizCount', quizCount.toString());
+    if (quizCount >= 10 && !BADGES[3].earned) {
+        BADGES[3].earned = true;
+        newBadges.push(BADGES[3]);
+    }
+
+    if (newBadges.length > 0) {
+        saveBadges();
+        showBadgeNotification(newBadges);
+    }
+}
+
+// Show badge notification
+function showBadgeNotification(badges) {
+    badges.forEach(badge => {
+        const notification = document.createElement('div');
+        notification.className = 'badge-notification';
+        notification.innerHTML = `
+            <div class="badge-notification-content">
+                <span class="badge-notification-icon">${badge.icon}</span>
+                <div>
+                    <div class="badge-notification-title">Badge Earned!</div>
+                    <div class="badge-notification-name">${badge.name}</div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    });
+}
+
+// Render badges in modal
+function renderBadges() {
+    badgesGrid.innerHTML = '';
+    BADGES.forEach(badge => {
+        const badgeElement = document.createElement('div');
+        badgeElement.className = `badge-item ${badge.earned ? 'earned' : 'locked'}`;
+        badgeElement.innerHTML = `
+            <span class="badge-icon">${badge.icon}</span>
+            <div class="badge-name">${badge.name}</div>
+            <div class="badge-description">${badge.description}</div>
+        `;
+        badgesGrid.appendChild(badgeElement);
+    });
+}
+
+// Event Listeners
+if (soundToggle) {
+    soundToggle.addEventListener('change', () => {
+        soundEnabled = soundToggle.checked;
+        localStorage.setItem('soundEnabled', soundEnabled);
+        playSound('click');
+    });
+}
+
+if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+        playSound('click');
+    });
+}
+
+if (badgesBtn) {
+    badgesBtn.addEventListener('click', () => {
+        renderBadges();
+        badgesModal.classList.remove('hidden');
+        playSound('click');
+    });
+}
+
+if (closeBadgesModal) {
+    closeBadgesModal.addEventListener('click', () => {
+        badgesModal.classList.add('hidden');
+    });
+}
+
+if (closeLeaderboardModal) {
+    closeLeaderboardModal.addEventListener('click', () => {
+        leaderboardModal.classList.add('hidden');
+    });
+}
+
+// Close modals on outside click
+[badgesModal, leaderboardModal].forEach(modal => {
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    }
+});
+
+// Load game data on startup
+loadGameData();

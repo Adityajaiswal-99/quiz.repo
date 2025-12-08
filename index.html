@@ -28,6 +28,10 @@
         <!-- Header -->
         <header>
             <div class="logo">BrainQuest</div>
+            <div class="header-controls">
+                <button id="badges-btn" class="icon-btn" title="View Badges">🏅</button>
+                <button id="dark-mode-toggle" class="icon-btn" title="Toggle Dark Mode">🌙</button>
+            </div>
             <div class="score-display" id="score-display" style="display: none;">Score: <span
                     id="current-score">0</span>
             </div>
@@ -134,6 +138,18 @@
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="timer-toggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-card">
+                            <div class="setting-icon">🔊</div>
+                            <div class="setting-info">
+                                <h3>Sound Effects</h3>
+                                <p>Enable audio feedback</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="sound-toggle" checked>
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -276,6 +292,32 @@
         <footer>
             <p>&copy; 2025 BrainQuest. Designed for Excellence.</p>
         </footer>
+
+        <!-- Badges Modal -->
+        <div id="badges-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🏅 Your Achievements</h2>
+                    <button class="close-btn" id="close-badges-modal">×</button>
+                </div>
+                <div class="badges-grid" id="badges-grid">
+                    <!-- Badges will be injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Modal -->
+        <div id="leaderboard-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🏆 Leaderboard</h2>
+                    <button class="close-btn" id="close-leaderboard-modal">×</button>
+                </div>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <p style="text-align: center; color: var(--text-muted);">Coming soon!</p>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="auth_logic.js"></script>
     <script src="quiz_data.js"></script>
