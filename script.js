@@ -488,8 +488,8 @@ function shareResults() {
     }
 }
 // Sound System using Web Audio API
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-let soundEnabled = true;
+// DISABLED - causing issues
+let soundEnabled = false; // Sounds disabled until fixed
 
 // Sound toggle
 const soundToggle = document.getElementById('sound-toggle');
