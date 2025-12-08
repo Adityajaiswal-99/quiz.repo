@@ -296,6 +296,7 @@ function checkAnswer(selectedIndex, selectedBtn) {
     });
 
     if (selectedIndex === correctIndex) {
+        playSound(true);
         selectedBtn.classList.add('correct');
         feedbackMessage.textContent = "Correct Answer! / सही उत्तर!";
         feedbackMessage.className = 'feedback-message success';
@@ -671,7 +672,6 @@ if (darkModeToggle) {
         const isDark = document.body.classList.contains('dark-mode');
         localStorage.setItem('darkMode', isDark);
         darkModeToggle.textContent = isDark ? '☀️' : '🌙';
-        playSound('click');
     });
 }
 
