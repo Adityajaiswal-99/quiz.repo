@@ -297,7 +297,7 @@ function checkAnswer(selectedIndex, selectedBtn) {
     });
 
     if (selectedIndex === correctIndex) {
-        playSound(true);
+        playSound('correct'); // Use new sound system
         selectedBtn.classList.add('correct');
         feedbackMessage.textContent = "Correct Answer! / सही उत्तर!";
         feedbackMessage.className = 'feedback-message success'; // Add success class
