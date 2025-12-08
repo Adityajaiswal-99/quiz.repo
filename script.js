@@ -679,7 +679,6 @@ if (badgesBtn) {
     badgesBtn.addEventListener('click', () => {
         renderBadges();
         badgesModal.classList.remove('hidden');
-        playSound('click');
     });
 }
 
