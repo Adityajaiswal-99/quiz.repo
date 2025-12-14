@@ -359,6 +359,18 @@ function showResults() {
         highScoreBadge.classList.add('hidden');
     }
 
+    // Save to Leaderboard
+    const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    leaderboard.push({
+        score: percentage, // Saving percentage as score for leaderboard
+        rawScore: score,
+        total: total,
+        category: currentCategory,
+        level: currentLevel,
+        date: new Date().toISOString()
+    });
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+
     // Populate breakdown
     const wrongCount = total - score;
     document.getElementById('correct-count').textContent = score;
@@ -534,6 +546,8 @@ const closeBadgesModal = document.getElementById('close-badges-modal');
 const badgesGrid = document.getElementById('badges-grid');
 const leaderboardModal = document.getElementById('leaderboard-modal');
 const closeLeaderboardModal = document.getElementById('close-leaderboard-modal');
+const leaderboardBtn = document.getElementById('leaderboard-btn');
+const leaderboardList = document.getElementById('leaderboard-list');
 
 // Badge definitions
 const BADGES = [
@@ -688,6 +702,46 @@ if (closeBadgesModal) {
     });
 }
 
+if (leaderboardBtn) {
+    leaderboardBtn.addEventListener('click', () => {
+        renderLeaderboard();
+        leaderboardModal.classList.remove('hidden');
+    });
+}
+
+// Render Leaderboard
+function renderLeaderboard() {
+    const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    // Sort by score (high to low)
+    leaderboard.sort((a, b) => b.score - a.score);
+
+    // Get list element (ensure it exists in HTML or use existing selector if available)
+    // Assuming structure inside modal exists
+    const listContainer = document.querySelector('#leaderboard-list');
+    if (listContainer) {
+        listContainer.innerHTML = '';
+
+        if (leaderboard.length === 0) {
+            listContainer.innerHTML = '<div class="empty-state">No scores yet. Play a quiz!</div>';
+            return;
+        }
+
+        leaderboard.slice(0, 10).forEach((entry, index) => {
+            const item = document.createElement('div');
+            item.className = 'leaderboard-entry';
+            item.innerHTML = `
+                <div class="rank">#${index + 1}</div>
+                <div class="details">
+                    <div class="category">${entry.category.toUpperCase()} (${entry.level})</div>
+                    <div class="date">${new Date(entry.date).toLocaleDateString()}</div>
+                </div>
+                <div class="score">${entry.score}%</div>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+}
+
 if (closeLeaderboardModal) {
     closeLeaderboardModal.addEventListener('click', () => {
         leaderboardModal.classList.add('hidden');
@@ -707,3 +761,19 @@ if (closeLeaderboardModal) {
 
 // Load game data on startup
 loadGameData();
+
+// Keyboard Navigation
+document.addEventListener('keydown', (e) => {
+    // Only handle keys if quiz view is active
+    if (!quizView.classList.contains('active')) return;
+
+    const key = e.key;
+    const options = document.querySelectorAll('.option-btn');
+
+    if (['1', '2', '3', '4'].includes(key)) {
+        const index = parseInt(key) - 1;
+        if (options[index] && !options[index].disabled) {
+            checkAnswer(index, options[index]);
+        }
+    }
+});
