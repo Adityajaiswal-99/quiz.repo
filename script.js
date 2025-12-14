@@ -113,6 +113,13 @@ function showLevelSelection(category) {
 }
 
 function showMenu() {
+    // Confirm exit if quiz is active and not finished
+    if (quizView.classList.contains('active') && currentQuestionIndex < currentQuestions.length) {
+        if (!confirm("Are you sure you want to quit? Your progress will be lost.")) {
+            return;
+        }
+    }
+
     stopTimer();
     resultsView.classList.remove('active');
     quizView.classList.remove('active');
@@ -121,6 +128,14 @@ function showMenu() {
     currentCategory = null;
     currentLevel = null;
 }
+
+// Prevent accidental tab close/refresh during active quiz
+window.addEventListener('beforeunload', (e) => {
+    if (quizView.classList.contains('active') && currentQuestionIndex < currentQuestions.length) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {

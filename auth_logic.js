@@ -55,6 +55,11 @@ signupForm.addEventListener('submit', async (e) => {
     const email = document.getElementById('signup-email').value;
     const password = document.getElementById('signup-password').value;
 
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+    }
+
     try {
         const response = await fetch('http://localhost:3000/api/register', {
             method: 'POST',

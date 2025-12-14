@@ -1054,6 +1054,7 @@ input:checked+.slider:before {
         transform: translateY(-20px);
     }
 }
+
 /* Modal Styles */
 .modal {
     position: fixed;
@@ -1114,6 +1115,26 @@ input:checked+.slider:before {
 
 .close-btn:hover {
     color: var(--error-color);
+}
+
+/* Info Modal Content */
+.info-block {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.info-block p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.info-note {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
 }
 
 /* Badges Grid */
@@ -1228,6 +1249,42 @@ input:checked+.slider:before {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--accent-color);
+}
+
+/* Leaderboard Stats Summary */
+.leaderboard-stats-summary {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-box {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-box:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-color);
 }
 
 /* Badge Notification */
