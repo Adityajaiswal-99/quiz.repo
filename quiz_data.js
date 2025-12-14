@@ -10,7 +10,17 @@ const quizData = {
             { q: "Which planet do we live on?", q_hi: "हम किस ग्रह पर रहते हैं?", options: ["Mars", "Earth", "Venus", "Jupiter"], options_hi: ["मंगल", "पृथ्वी", "शुक्र", "बृहस्पति"], answer: 1 },
             { q: "How many fingers do humans have on one hand?", q_hi: "मनुष्यों के एक हाथ में कितनी उंगलियां होती हैं?", options: ["4", "5", "6", "10"], options_hi: ["4", "5", "6", "10"], answer: 1 },
             { q: "What is 2 + 2?", q_hi: "2 + 2 क्या है?", options: ["3", "4", "5", "6"], options_hi: ["3", "4", "5", "6"], answer: 1 },
-            { q: "Which season is the hottest?", q_hi: "कौन सा मौसम सबसे गर्म होता है?", options: ["Winter", "Summer", "Spring", "Autumn"], options_hi: ["सर्दी", "गर्मी", "वसंत", "पतझड़"], answer: 1 }
+            { q: "Which season is the hottest?", q_hi: "कौन सा मौसम सबसे गर्म होता है?", options: ["Winter", "Summer", "Spring", "Autumn"], options_hi: ["सर्दी", "गर्मी", "वसंत", "पतझड़"], answer: 1 },
+            { q: "Which animal is the largest primate?", q_hi: "सबसे बड़ा प्राइमेट कौन सा जानवर है?", options: ["Gorilla", "Chimpanzee", "Orangutan", "Baboon"], options_hi: ["गोरिल्ला", "चिंपांज़ी", "ओरंगुटान", "बबून"], answer: 0 },
+            { q: "What is the capital of France?", q_hi: "फ्रांस की राजधानी क्या है?", options: ["Paris", "London", "Rome", "Berlin"], options_hi: ["पेरिस", "लंदन", "रोम", "बर्लिन"], answer: 0 },
+            { q: "Which is the tallest mountain in the world?", q_hi: "विश्व का सबसे ऊंचा पर्वत कौन सा है?", options: ["K2", "Mt. Everest", "Kangchenjunga", "Lhotse"], options_hi: ["K2", "माउंट एवरेस्ट", "कंचनजंगा", "ल्होत्से"], answer: 1 },
+            { q: "How many colors are in a rainbow?", q_hi: "इंद्रधनुष में कितने रंग होते हैं?", options: ["5", "6", "7", "8"], options_hi: ["5", "6", "7", "8"], answer: 2 },
+            { q: "Which bird cannot fly?", q_hi: "कौन सा पक्षी उड़ नहीं सकता?", options: ["Parrot", "Ostrich", "Eagle", "Sparrow"], options_hi: ["तोता", "शुतुरमुर्ग", "ईगल", "गौरैया"], answer: 1 },
+            { q: "What is the opposite of 'Hot'?", q_hi: "'गरम' का विपरीत क्या है?", options: ["Cold", "Warm", "Dry", "Wet"], options_hi: ["ठंडा", "गर्म", "सूखा", "गीला"], answer: 0 },
+            { q: "Which geometric shape has no sides?", q_hi: "किस ज्यामितीय आकार की कोई भुजा नहीं होती?", options: ["Square", "Triangle", "Circle", "Rectangle"], options_hi: ["वर्ग", "त्रिभुज", "वृत्त", "आयत"], answer: 2 },
+            { q: "What is the currency of India?", q_hi: "भारत की मुद्रा क्या है?", options: ["Rupee", "Dollar", "Yen", "Euro"], options_hi: ["रुपये", "डॉलर", "येन", "यूरो"], answer: 0 },
+            { q: "Which month has 28 days?", q_hi: "किस महीने में 28 दिन होते हैं?", options: ["February", "March", "April", "May"], options_hi: ["फरवरी", "मार्च", "अप्रैल", "मई"], answer: 0 },
+            { q: "What is the boiling point of water?", q_hi: "पानी का क्वथनांक क्या है?", options: ["50°C", "100°C", "200°C", "0°C"], options_hi: ["50°C", "100°C", "200°C", "0°C"], answer: 1 }
         ],
         medium: [
             { q: "Who wrote the Indian National Anthem?", q_hi: "भारतीय राष्ट्रगान किसने लिखा था?", options: ["Bankim Chandra Chatterjee", "Rabindranath Tagore", "Sarojini Naidu", "Subhash Chandra Bose"], options_hi: ["बंकिम चंद्र चटर्जी", "रवींद्रनाथ टैगोर", "सरोजिनी नायडू", "सुभाष चंद्र बोस"], answer: 1 },
@@ -22,7 +32,17 @@ const quizData = {
             { q: "Who was the first Prime Minister of India?", q_hi: "भारत के पहले प्रधान मंत्री कौन थे?", options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Indira Gandhi", "Sardar Patel"], options_hi: ["महात्मा गांधी", "जवाहरलाल नेहरू", "इंदिरा गांधी", "सरदार पटेल"], answer: 1 },
             { q: "Which gas is most abundant in the Earth's atmosphere?", q_hi: "पृथ्वी के वायुमंडल में कौन सी गैस सबसे अधिक प्रचुर मात्रा में है?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Argon"], options_hi: ["ऑक्सीजन", "नाइट्रोजन", "कार्बन डाइऑक्साइड", "आर्गन"], answer: 1 },
             { q: "What is the hardest natural substance on Earth?", q_hi: "पृथ्वी पर सबसे कठोर प्राकृतिक पदार्थ कौन सा है?", options: ["Gold", "Iron", "Diamond", "Platinum"], options_hi: ["सोना", "लोहा", "हीरा", "प्लैटिनम"], answer: 2 },
-            { q: "Which planet is known as the Red Planet?", q_hi: "किस ग्रह को लाल ग्रह के रूप में जाना जाता है?", options: ["Venus", "Mars", "Jupiter", "Saturn"], options_hi: ["शुक्र", "मंगल", "बृहस्पति", "शनि"], answer: 1 }
+            { q: "Which planet is known as the Red Planet?", q_hi: "किस ग्रह को लाल ग्रह के रूप में जाना जाता है?", options: ["Venus", "Mars", "Jupiter", "Saturn"], options_hi: ["शुक्र", "मंगल", "बृहस्पति", "शनि"], answer: 1 },
+            { q: "Who wrote 'Harry Potter'?", q_hi: "'हैरी पॉटर' किसने लिखा?", options: ["J.K. Rowling", "J.R.R. Tolkien", "George R.R. Martin", "Stephen King"], options_hi: ["जे.के. रॉउलिंग", "जे.आर.आर. टोल्किन", "जॉर्ज़ आर.आर. मार्टिन", "स्टीफन किंग"], answer: 0 },
+            { q: "Which element is needed for burning?", q_hi: "जलने के लिए किस तत्व की आवश्यकता होती है?", options: ["Oxygen", "Hydrogen", "Nitrogen", "Helium"], options_hi: ["ऑक्सीजन", "हाइड्रोजन", "नाइट्रोजन", "हीलियम"], answer: 0 },
+            { q: "What is the largest country by area?", q_hi: "क्षेत्रफल के हिसाब से सबसे बड़ा देश कौन सा है?", options: ["China", "USA", "Russia", "Canada"], options_hi: ["चीन", "यूएसए", "रूस", "कनाडा"], answer: 2 },
+            { q: "Which planet is known as the Blue Planet?", q_hi: "किस ग्रह को नीला ग्रह कहा जाता है?", options: ["Mars", "Earth", "Neptune", "Venus"], options_hi: ["मंगल", "पृथ्वी", "नेपच्यून", "शुक्र"], answer: 1 },
+            { q: "What is the name of the Indian Space Agency?", q_hi: "भारतीय अंतरिक्ष एजेंसी का नाम क्या है?", options: ["NASA", "ISRO", "ESA", "Roscosmos"], options_hi: ["नासा", "इसरो", "ईएसए", "रोस्कोस्मोस"], answer: 1 },
+            { q: "Who is known as the Missile Man of India?", q_hi: "भारत के मिसाइल मैन के रूप में किसे जाना जाता है?", options: ["A.P.J. Abdul Kalam", "Vikram Sarabhai", "Homi Bhabha", "C.V. Raman"], options_hi: ["ए.पी.जे. अब्दुल कलाम", "विक्रम साराभाई", "होमी भाभा", "सी.वी. रमन"], answer: 0 },
+            { q: "What is the hardest part of the human body?", q_hi: "मानव शरीर का सबसे कठोर भाग कौन सा है?", options: ["Bone", "Enamel", "Skull", "Nail"], options_hi: ["हड्डी", "तामचीनी", "खोपड़ी", "नाखून"], answer: 1 },
+            { q: "Which country gifted the Statue of Liberty to the USA?", q_hi: "किस देश ने अमेरिका को स्टैच्यू ऑफ लिबर्टी उपहार में दी थी?", options: ["UK", "Germany", "France", "Spain"], options_hi: ["यूके", "जर्मनी", "फ्रांस", "स्पेन"], answer: 2 },
+            { q: "Who won the Cricket World Cup in 2011?", q_hi: "2011 में क्रिकेट विश्व कप किसने जीता?", options: ["Australia", "India", "Sri Lanka", "Pakistan"], options_hi: ["ऑस्ट्रेलिया", "भारत", "श्रीलंका", "पाकिस्तान"], answer: 1 },
+            { q: "What is the capital of Australia?", q_hi: "ऑस्ट्रेलिया की राजधानी क्या है?", options: ["Sydney", "Melbourne", "Canberra", "Perth"], options_hi: ["सिडनी", "मेलबर्न", "कैनबरा", "पर्थ"], answer: 2 }
         ],
         hard: [
             { q: "In which year did the Titanic sink?", q_hi: "टाइटेनिक किस वर्ष डूबा था?", options: ["1910", "1912", "1914", "1916"], options_hi: ["1910", "1912", "1914", "1916"], answer: 1 },
@@ -34,7 +54,17 @@ const quizData = {
             { q: "Which year did World War II end?", q_hi: "द्वितीय विश्व युद्ध किस वर्ष समाप्त हुआ?", options: ["1943", "1945", "1947", "1950"], options_hi: ["1943", "1945", "1947", "1950"], answer: 1 },
             { q: "What is the smallest country in the world?", q_hi: "विश्व का सबसे छोटा देश कौन सा है?", options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"], options_hi: ["मोनाको", "वेटिकन सिटी", "सैन मैरिनो", "लिकटेंस्टीन"], answer: 1 },
             { q: "Who discovered Penicillin?", q_hi: "पेनिसिलिन की खोज किसने की?", options: ["Marie Curie", "Alexander Fleming", "Louis Pasteur", "Isaac Newton"], options_hi: ["मैरी क्यूरी", "अलेक्जेंडर फ्लेमिंग", "लुई पाश्चर", "आइजैक न्यूटन"], answer: 1 },
-            { q: "Which planet has the most moons?", q_hi: "किस ग्रह के सबसे अधिक चंद्रमा हैं?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], options_hi: ["बृहस्पति", "शनि", "यूरेनस", "नेपच्यून"], answer: 1 }
+            { q: "Which planet has the most moons?", q_hi: "किस ग्रह के सबसे अधिक चंद्रमा हैं?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], options_hi: ["बृहस्पति", "शनि", "यूरेनस", "नेपच्यून"], answer: 1 },
+            { q: "Which year did man first land on the moon?", q_hi: "मनुष्य पहली बार चाँद पर किस वर्ष उतरा?", options: ["1965", "1969", "1972", "1959"], options_hi: ["1965", "1969", "1972", "1959"], answer: 1 },
+            { q: "How many bones are in the human ear?", q_hi: "मानव कान में कितनी हड्डियाँ होती हैं?", options: ["3", "4", "5", "6"], options_hi: ["3", "4", "5", "6"], answer: 0 },
+            { q: "Who developed the theory of relativity?", q_hi: "सापेक्षता का सिद्धांत किसने विकसित किया?", options: ["Newton", "Einstein", "Galileo", "Tesla"], options_hi: ["न्यूटन", "आइंस्टीन", "गैलीलियो", "टेस्ला"], answer: 1 },
+            { q: "What is the speed of light?", q_hi: "प्रकाश की गति क्या है?", options: ["300,000 km/s", "150,000 km/s", "1,000 km/s", "3,000 km/s"], options_hi: ["300,000 किमी/से", "150,000 किमी/से", "1,000 किमी/से", "3,000 किमी/से"], answer: 0 },
+            { q: "Which chemical element has the symbol 'Au'?", q_hi: "किस रासायनिक तत्व का प्रतीक 'Au' है?", options: ["Silver", "Gold", "Copper", "Aluminum"], options_hi: ["चांदी", "सोना", "तांबा", "एल्यूमीनियम"], answer: 1 },
+            { q: "Who was the first woman in space?", q_hi: "अंतरिक्ष में जाने वाली पहली महिला कौन थी?", options: ["Valentina Tereshkova", "Sally Ride", "Kalpana Chawla", "Sunita Williams"], options_hi: ["वेलेंटीना टेरेश्कोवा", "सैली राइड", "कल्पना चावला", "सुनीता विलियम्स"], answer: 0 },
+            { q: "What does DNA stand for?", q_hi: "DNA का पूर्ण रूप क्या है?", options: ["Deoxyribonucleic Acid", "Deoxyribogenetic Acid", "Deoxynucleic Acid", "Di-Nucleic Acid"], options_hi: ["डीऑक्सीराइबोन्यूक्लिक एसिड", "डीऑक्सीराइबोजेनेटिक एसिड", "डीऑक्सीन्यूक्लिक एसिड", "डाय-न्यूक्लिक एसिड"], answer: 0 },
+            { q: "Which is the smallest bone in the human body?", q_hi: "मानव शरीर की सबसे छोटी हड्डी कौन सी है?", options: ["Femur", "Stapes", "Tibia", "Fibula"], options_hi: ["फीमर", "स्टेप्स", "टिबिया", "फ fibula"], answer: 1 },
+            { q: "How many hearts does an octopus have?", q_hi: "एक ऑक्टोपस के कितने दिल होते हैं?", options: ["1", "2", "3", "4"], options_hi: ["1", "2", "3", "4"], answer: 2 },
+            { q: "Which civilization built the Pyramids?", q_hi: "पिरामिडों का निर्माण किस सभ्यता ने किया था?", options: ["Roman", "Greek", "Egyptian", "Mayan"], options_hi: ["रोमन", "ग्रीक", "मिस्र", "मय"], answer: 2 }
         ]
     },
     math: {
@@ -48,7 +78,17 @@ const quizData = {
             { q: "How many sides does a square have?", q_hi: "एक वर्ग की कितनी भुजाएँ होती हैं?", options: ["3", "4", "5", "6"], options_hi: ["3", "4", "5", "6"], answer: 1 },
             { q: "15 + 5 = ?", q_hi: "15 + 5 = ?", options: ["10", "15", "20", "25"], options_hi: ["10", "15", "20", "25"], answer: 2 },
             { q: "Which number is even?", q_hi: "कौन सी संख्या सम है?", options: ["1", "2", "3", "5"], options_hi: ["1", "2", "3", "5"], answer: 1 },
-            { q: "Which number is odd?", q_hi: "कौन सी संख्या विषम है?", options: ["2", "4", "5", "6"], options_hi: ["2", "4", "5", "6"], answer: 2 }
+            { q: "Which number is odd?", q_hi: "कौन सी संख्या विषम है?", options: ["2", "4", "5", "6"], options_hi: ["2", "4", "5", "6"], answer: 2 },
+            { q: "What is 10 + 20?", q_hi: "10 + 20 क्या है?", options: ["20", "30", "40", "50"], options_hi: ["20", "30", "40", "50"], answer: 1 },
+            { q: "Half of 100 is?", q_hi: "100 का आधा है?", options: ["25", "50", "75", "10"], options_hi: ["25", "50", "75", "10"], answer: 1 },
+            { q: "What is 3 x 3?", q_hi: "3 x 3 क्या है?", options: ["6", "9", "12", "15"], options_hi: ["6", "9", "12", "15"], answer: 1 },
+            { q: "Usually how many days in a year?", q_hi: "आमतौर पर एक साल में कितने दिन होते हैं?", options: ["300", "365", "370", "400"], options_hi: ["300", "365", "370", "400"], answer: 1 },
+            { q: "100 - 1 = ?", q_hi: "100 - 1 = ?", options: ["90", "99", "101", "100"], options_hi: ["90", "99", "101", "100"], answer: 1 },
+            { q: "Which comes after 19?", q_hi: "19 के बाद क्या आता है?", options: ["18", "20", "21", "22"], options_hi: ["18", "20", "21", "22"], answer: 1 },
+            { q: "50 + 50 = ?", q_hi: "50 + 50 = ?", options: ["90", "100", "110", "120"], options_hi: ["90", "100", "110", "120"], answer: 1 },
+            { q: "How many sides in a Triangle?", q_hi: "त्रिकोण में कितनी भुजाएँ होती हैं?", options: ["2", "3", "4", "5"], options_hi: ["2", "3", "4", "5"], answer: 1 },
+            { q: "10 / 2 = ?", q_hi: "10 / 2 = ?", options: ["2", "4", "5", "6"], options_hi: ["2", "4", "5", "6"], answer: 2 },
+            { q: "5 x 0 = ?", q_hi: "5 x 0 = ?", options: ["0", "5", "1", "10"], options_hi: ["0", "5", "1", "10"], answer: 0 }
         ],
         medium: [
             { q: "12 * 12 = ?", q_hi: "12 * 12 = ?", options: ["124", "144", "164", "184"], options_hi: ["124", "144", "164", "184"], answer: 1 },
@@ -60,7 +100,17 @@ const quizData = {
             { q: "5 cubed is?", q_hi: "5 का घन है?", options: ["25", "100", "125", "150"], options_hi: ["25", "100", "125", "150"], answer: 2 },
             { q: "Sum of angles in a triangle?", q_hi: "त्रिभुज के कोणों का योग?", options: ["90", "180", "270", "360"], options_hi: ["90", "180", "270", "360"], answer: 1 },
             { q: "Next prime number after 7?", q_hi: "7 के बाद अगली अभाज्य संख्या?", options: ["9", "10", "11", "13"], options_hi: ["9", "10", "11", "13"], answer: 2 },
-            { q: "250 / 5 = ?", q_hi: "250 / 5 = ?", options: ["40", "50", "60", "70"], options_hi: ["40", "50", "60", "70"], answer: 1 }
+            { q: "250 / 5 = ?", q_hi: "250 / 5 = ?", options: ["40", "50", "60", "70"], options_hi: ["40", "50", "60", "70"], answer: 1 },
+            { q: "What is the square root of 64?", q_hi: "64 का वर्गमूल क्या है?", options: ["6", "7", "8", "9"], options_hi: ["6", "7", "8", "9"], answer: 2 },
+            { q: "12 + 15 + 3 = ?", q_hi: "12 + 15 + 3 = ?", options: ["20", "30", "40", "50"], options_hi: ["20", "30", "40", "50"], answer: 1 },
+            { q: "What is 25% of 100?", q_hi: "100 का 25% क्या है?", options: ["20", "25", "30", "40"], options_hi: ["20", "25", "30", "40"], answer: 1 },
+            { q: "11 x 11 = ?", q_hi: "11 x 11 = ?", options: ["120", "121", "122", "123"], options_hi: ["120", "121", "122", "123"], answer: 1 },
+            { q: "Solve: x + 5 = 15", q_hi: "हल करें: x + 5 = 15", options: ["5", "10", "15", "20"], options_hi: ["5", "10", "15", "20"], answer: 1 },
+            { q: "How many degrees in a right angle?", q_hi: "समकोण में कितने डिग्री होते हैं?", options: ["45", "90", "180", "360"], options_hi: ["45", "90", "180", "360"], answer: 1 },
+            { q: "What is the next prime after 13?", q_hi: "13 के बाद अगली अभाज्य संख्या?", options: ["15", "16", "17", "19"], options_hi: ["15", "16", "17", "19"], answer: 2 },
+            { q: "Perimeter of square with side 5?", q_hi: "भुजा 5 वाले वर्ग की परिधि?", options: ["10", "15", "20", "25"], options_hi: ["10", "15", "20", "25"], answer: 2 },
+            { q: "3 to the power of 2?", q_hi: "3 की घात 2?", options: ["6", "9", "12", "15"], options_hi: ["6", "9", "12", "15"], answer: 1 },
+            { q: "What is 1/2 as a decimal?", q_hi: "1/2 दशमलव के रूप में?", options: ["0.2", "0.5", "0.25", "0.75"], options_hi: ["0.2", "0.5", "0.25", "0.75"], answer: 1 }
         ],
         hard: [
             { q: "Derivative of x^2?", q_hi: "x^2 का अवकलज?", options: ["x", "2x", "x^2", "2"], options_hi: ["x", "2x", "x^2", "2"], answer: 1 },
@@ -72,7 +122,17 @@ const quizData = {
             { q: "Binary representation of 10?", q_hi: "10 का बाइनरी प्रतिनिधित्व?", options: ["1001", "1010", "1100", "1110"], options_hi: ["1001", "1010", "1100", "1110"], answer: 1 },
             { q: "Roots of x^2 - 5x + 6 = 0?", q_hi: "x^2 - 5x + 6 = 0 के मूल?", options: ["2, 3", "1, 6", "-2, -3", "-1, -6"], options_hi: ["2, 3", "1, 6", "-2, -3", "-1, -6"], answer: 0 },
             { q: "Value of e (Euler's number) approx?", q_hi: "e (यूलर संख्या) का मान लगभग?", options: ["2.51", "2.71", "2.91", "3.14"], options_hi: ["2.51", "2.71", "2.91", "3.14"], answer: 1 },
-            { q: "Sum of infinite geometric series 1 + 1/2 + 1/4...?", q_hi: "अनंत ज्यामितीय श्रेणी 1 + 1/2 + 1/4... का योग?", options: ["1.5", "2", "2.5", "Infinity"], options_hi: ["1.5", "2", "2.5", "अनंत"], answer: 1 }
+            { q: "Sum of infinite geometric series 1 + 1/2 + 1/4...?", q_hi: "अनंत ज्यामितीय श्रेणी 1 + 1/2 + 1/4... का योग?", options: ["1.5", "2", "2.5", "Infinity"], options_hi: ["1.5", "2", "2.5", "अनंत"], answer: 1 },
+            { q: "What is sin(30°)?", q_hi: "sin(30°) का मान?", options: ["0", "0.5", "1", "0.866"], options_hi: ["0", "0.5", "1", "0.866"], answer: 1 },
+            { q: "Value of log(100) base 10?", q_hi: "log(100) बेस 10 का मान?", options: ["1", "2", "3", "10"], options_hi: ["1", "2", "3", "10"], answer: 1 },
+            { q: "If y = x^3, what is dy/dx?", q_hi: "यदि y = x^3, तो dy/dx क्या है?", options: ["2x", "3x", "3x^2", "x^2"], options_hi: ["2x", "3x", "3x^2", "x^2"], answer: 2 },
+            { q: "Area of a circle radius 3?", q_hi: "त्रिज्या 3 वाले वृत्त का क्षेत्रफल?", options: ["3π", "6π", "9π", "12π"], options_hi: ["3π", "6π", "9π", "12π"], answer: 2 },
+            { q: "Integral of 2x dx?", q_hi: "2x dx का समाकलन?", options: ["x^2", "2x^2", "x", "2x"], options_hi: ["x^2", "2x^2", "x", "2x"], answer: 0 },
+            { q: "What is 10! / 8!", q_hi: "10! / 8! क्या है?", options: ["2", "10", "90", "720"], options_hi: ["2", "10", "90", "720"], answer: 2 },
+            { q: "Binary for 5?", q_hi: "5 का बाइनरी?", options: ["101", "110", "100", "011"], options_hi: ["101", "110", "100", "011"], answer: 0 },
+            { q: "Sum of first 10 natural numbers?", q_hi: "प्रथम 10 प्राकृत संख्याओं का योग?", options: ["50", "55", "60", "45"], options_hi: ["50", "55", "60", "45"], answer: 1 },
+            { q: "Value of cos(0°)?", q_hi: "cos(0°) का मान?", options: ["0", "1", "-1", "Undef"], options_hi: ["0", "1", "-1", "अपरिभाषित"], answer: 1 },
+            { q: "Roots of x^2 - 1 = 0?", q_hi: "x^2 - 1 = 0 के मूल?", options: ["1, 1", "-1, -1", "1, -1", "0, 0"], options_hi: ["1, 1", "-1, -1", "1, -1", "0, 0"], answer: 2 }
         ]
     },
     science: {
