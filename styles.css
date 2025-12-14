@@ -1321,8 +1321,240 @@ input:checked+.slider:before {
     margin-bottom: 0.2rem;
 }
 
+font-size: 1.1rem;
+}
+
+.info-note {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+}
+
+/* Badges Grid */
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.badge-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.badge-item.earned {
+    border-color: var(--accent-color);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.badge-item.locked {
+    opacity: 0.4;
+    filter: grayscale(100%);
+}
+
+.badge-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.badge-name {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.3rem;
+}
+
+.badge-description {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Leaderboard */
+.leaderboard-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.leaderboard-filters select {
+    flex: 1;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.leaderboard-entry {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    gap: 1rem;
+}
+
+.leaderboard-rank {
+    font-size: 1.5rem;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: center;
+}
+
+.leaderboard-rank.top-1 {
+    color: #fbbf24;
+}
+
+.leaderboard-rank.top-2 {
+    color: #cbd5e1;
+}
+
+.leaderboard-rank.top-3 {
+    color: #cd7f32;
+}
+
+.leaderboard-info {
+    flex: 1;
+}
+
+.leaderboard-name {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.leaderboard-details {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.leaderboard-score {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+/* Leaderboard Stats Summary */
+.leaderboard-stats-summary {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-box {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-box:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+/* Badge Notification */
+.badge-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.badge-notification.show {
+    transform: translateX(0);
+}
+
+.badge-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.badge-notification-icon {
+    font-size: 3rem;
+}
+
+.badge-notification-title {
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.2rem;
+}
+
 .badge-notification-name {
     font-size: 1.2rem;
     font-weight: 700;
     color: white;
+}
+
+/* =========================================
+   DARK MODE STYLES
+   ========================================= */
+body.dark-mode {
+    background: #0f172a !important;
+    /* Force override gradient */
+    background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%) !important;
+    animation: none !important;
+    color: #f8fafc;
+}
+
+body.dark-mode .question-container,
+body.dark-mode .category-card,
+body.dark-mode .level-card,
+body.dark-mode .setting-card,
+body.dark-mode .results-content,
+body.dark-mode .leaderboard-stats-summary,
+body.dark-mode .modal-content {
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .logo {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+body.dark-mode .option-btn:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
 }
