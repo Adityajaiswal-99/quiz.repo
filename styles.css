@@ -1547,6 +1547,73 @@ body.dark-mode {
     color: #f8fafc;
 }
 
+/* Smoke/Fog Effect */
+.fog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    /* Behind content but above background */
+    opacity: 0;
+    transition: opacity 1s ease;
+    overflow: hidden;
+}
+
+body.dark-mode .fog-overlay {
+    opacity: 1;
+}
+
+.fog-layer {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: radial-gradient(circle at center, rgba(148, 163, 184, 0.08) 0%, transparent 60%);
+    filter: blur(80px);
+    animation: drift 25s infinite linear;
+}
+
+.fog-layer-1 {
+    animation-duration: 35s;
+    background: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+    transform-origin: 40% 30%;
+}
+
+.fog-layer-2 {
+    animation-duration: 45s;
+    background: radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+    transform-origin: 60% 70%;
+    animation-direction: reverse;
+}
+
+.fog-layer-3 {
+    animation-duration: 40s;
+    background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 60%);
+    transform-origin: 50% 50%;
+}
+
+@keyframes drift {
+    0% {
+        transform: rotate(0deg) translate(0, 0);
+    }
+
+    33% {
+        transform: rotate(5deg) translate(30px, -20px);
+    }
+
+    66% {
+        transform: rotate(-5deg) translate(-20px, 30px);
+    }
+
+    100% {
+        transform: rotate(0deg) translate(0, 0);
+    }
+}
+
 body.dark-mode .question-container,
 body.dark-mode .category-card,
 body.dark-mode .level-card,
