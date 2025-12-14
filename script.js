@@ -575,7 +575,10 @@ const BADGES = [
     { id: 'perfect', name: 'Perfect Score', icon: '💯', description: 'Get 100% on any quiz', earned: false },
     { id: 'speed', name: 'Speed Demon', icon: '⚡', description: 'Complete quiz in under 1 minute', earned: false },
     { id: 'streak', name: 'Streak Master', icon: '🔥', description: 'Get 5+ correct in a row', earned: false },
-    { id: 'scholar', name: 'Scholar', icon: '🎓', description: 'Complete 10 quizzes', earned: false }
+    { id: 'scholar', name: 'Scholar', icon: '🎓', description: 'Complete 10 quizzes', earned: false },
+    { id: 'sharpshooter', name: 'Sharpshooter', icon: '🎯', description: 'Get 80% accuracy in Hard mode', earned: false },
+    { id: 'night_owl', name: 'Night Owl', icon: '🦉', description: 'Complete a quiz after 10 PM', earned: false },
+    { id: 'veteran', name: 'Veteran', icon: '🎖️', description: 'Complete 50 quizzes', earned: false }
 ];
 
 // Load saved badges and sound preference
@@ -600,6 +603,9 @@ function loadGameData() {
     const savedDarkMode = localStorage.getItem('darkMode');
     if (savedDarkMode === 'true') {
         document.body.classList.add('dark-mode');
+        if (darkModeToggle) darkModeToggle.textContent = '☀️';
+    } else {
+        if (darkModeToggle) darkModeToggle.textContent = '🌙';
     }
 }
 
@@ -636,12 +642,31 @@ function checkBadges(quizData) {
         newBadges.push(BADGES[2]);
     }
 
-    // Scholar (10 quizzes completed)
+    // Scholar (10 quizzes completed) & Veteran (50 quizzes)
     const quizCount = parseInt(localStorage.getItem('quizCount') || '0') + 1;
     localStorage.setItem('quizCount', quizCount.toString());
+
     if (quizCount >= 10 && !BADGES[3].earned) {
         BADGES[3].earned = true;
         newBadges.push(BADGES[3]);
+    }
+
+    if (quizCount >= 50 && !BADGES[6].earned) { // Veteran is index 6
+        BADGES[6].earned = true;
+        newBadges.push(BADGES[6]);
+    }
+
+    // Sharpshooter (80% in Hard mode)
+    if (currentLevel === 'hard' && quizData.percentage >= 80 && !BADGES[4].earned) { // Index 4
+        BADGES[4].earned = true;
+        newBadges.push(BADGES[4]);
+    }
+
+    // Night Owl (After 10 PM)
+    const currentHour = new Date().getHours();
+    if ((currentHour >= 22 || currentHour < 5) && !BADGES[5].earned) { // Index 5
+        BADGES[5].earned = true;
+        newBadges.push(BADGES[5]);
     }
 
     if (newBadges.length > 0) {
@@ -706,6 +731,7 @@ if (darkModeToggle) {
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
         localStorage.setItem('darkMode', isDark);
+        // Correctly update icon
         darkModeToggle.textContent = isDark ? '☀️' : '🌙';
     });
 }
