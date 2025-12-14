@@ -548,6 +548,12 @@ const leaderboardModal = document.getElementById('leaderboard-modal');
 const closeLeaderboardModal = document.getElementById('close-leaderboard-modal');
 const leaderboardBtn = document.getElementById('leaderboard-btn');
 const leaderboardList = document.getElementById('leaderboard-list');
+const infoModal = document.getElementById('info-modal');
+const closeInfoModal = document.getElementById('close-info-modal');
+const infoModalTitle = document.getElementById('info-modal-title');
+const infoModalContent = document.getElementById('info-modal-content');
+const howToPlayBtn = document.getElementById('how-to-play-btn');
+const aboutBtn = document.getElementById('about-btn');
 
 // Badge definitions
 const BADGES = [
@@ -748,11 +754,84 @@ if (closeLeaderboardModal) {
     });
 }
 
-// Close modals on outside click
-[badgesModal, leaderboardModal].forEach(modal => {
+// Info Modal Functions
+function openInfoModal(title, content) {
+    infoModalTitle.textContent = title;
+    infoModalContent.innerHTML = content;
+    infoModal.classList.remove('hidden');
+}
+
+if (closeInfoModal) {
+    closeInfoModal.addEventListener('click', () => {
+        infoModal.classList.add('hidden');
+    });
+}
+
+if (howToPlayBtn) {
+    howToPlayBtn.addEventListener('click', () => {
+        openInfoModal('How to Play', `
+            <div class="info-block">
+                <p><strong>Step 1:</strong> Select a Category from the main menu.</p>
+                <p><strong>Step 2:</strong> Choose a Difficulty Level (Easy, Medium, Hard).</p>
+                <p><strong>Step 3:</strong> Answer questions before the timer runs out!</p>
+                <div class="info-note">
+                    <strong>Controls:</strong><br>
+                    • Use your mouse/touch to select options.<br>
+                    • Use keys <strong>1-4</strong> for quick selection.<br>
+                    • Press <strong>Escape</strong> to close modals.
+                </div>
+            </div>
+        `);
+    });
+    // Add keyboard support for accessibility
+    howToPlayBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            howToPlayBtn.click();
+        }
+    });
+}
+
+if (aboutBtn) {
+    aboutBtn.addEventListener('click', () => {
+        openInfoModal('About BrainQuest', `
+            <div class="info-block" style="text-align: center;">
+                <p><strong>BrainQuest v1.0.0</strong></p>
+                <p>Designed for Excellence.</p>
+                <p>Created by <strong>Aditya Jaiswal</strong></p>
+                <br>
+                <p>Featuring:</p>
+                <ul style="list-style: none; padding: 0;">
+                    <li>✨ Dark Mode</li>
+                    <li>🏆 Leaderboards</li>
+                    <li>🌍 Multilingual Support (Hindi)</li>
+                </ul>
+                <br>
+                <p>&copy; 2025 All Rights Reserved.</p>
+            </div>
+        `);
+    });
+    aboutBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            aboutBtn.click();
+        }
+    });
+}
+
+// Close modals on outside click & Escape key
+[badgesModal, leaderboardModal, infoModal].forEach(modal => {
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        [badgesModal, leaderboardModal, infoModal].forEach(modal => {
+            if (modal && !modal.classList.contains('hidden')) {
                 modal.classList.add('hidden');
             }
         });

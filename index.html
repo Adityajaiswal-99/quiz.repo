@@ -138,7 +138,7 @@
                                 <p>Enable countdown timer</p>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="timer-toggle" checked>
+                                <input type="checkbox" id="timer-toggle" checked aria-label="Toggle Timer">
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -150,7 +150,7 @@
                                 <p>Enable audio feedback</p>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="sound-toggle" checked>
+                                <input type="checkbox" id="sound-toggle" checked aria-label="Toggle Sound">
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -161,12 +161,29 @@
                                 <h3>Questions</h3>
                                 <p>Number of questions</p>
                             </div>
-                            <select id="question-count-select" class="setting-select">
+                            <select id="question-count-select" class="setting-select"
+                                aria-label="Select number of questions">
                                 <option value="5">5 Questions</option>
                                 <option value="10" selected>10 Questions</option>
                                 <option value="15">15 Questions</option>
                                 <option value="20">20 Questions</option>
                             </select>
+                        </div>
+
+                        <div class="setting-card clickable" id="how-to-play-btn" tabindex="0">
+                            <div class="setting-icon">❓</div>
+                            <div class="setting-info">
+                                <h3>How to Play</h3>
+                                <p>Learn the rules</p>
+                            </div>
+                        </div>
+
+                        <div class="setting-card clickable" id="about-btn" tabindex="0">
+                            <div class="setting-icon">ℹ️</div>
+                            <div class="setting-info">
+                                <h3>About</h3>
+                                <p>App info & credits</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -312,10 +329,23 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>🏆 Leaderboard</h2>
-                    <button class="close-btn" id="close-leaderboard-modal">×</button>
+                    <button class="close-btn" id="close-leaderboard-modal" aria-label="Close Leaderboard">×</button>
                 </div>
                 <div class="leaderboard-list" id="leaderboard-list">
                     <p style="text-align: center; color: var(--text-muted);">Coming soon!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Modal (Instructions/About) -->
+        <div id="info-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="info-modal-title">Title</h2>
+                    <button class="close-btn" id="close-info-modal" aria-label="Close Modal">×</button>
+                </div>
+                <div class="info-content" id="info-modal-content">
+                    <!-- Content injected via JS -->
                 </div>
             </div>
         </div>
