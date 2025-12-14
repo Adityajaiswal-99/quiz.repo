@@ -1316,12 +1316,27 @@ input:checked+.slider:before {
 }
 
 .badge-notification-title {
+    font-size: 1.1rem;
     font-weight: 600;
     color: white;
     margin-bottom: 0.2rem;
 }
 
-font-size: 1.1rem;
+.badge-notification-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* Info Modal Content */
+.info-block {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.info-block p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
 }
 
 .info-note {
