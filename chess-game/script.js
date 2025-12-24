@@ -20,21 +20,7 @@ const closeModalBtn = document.getElementById('close-modal-btn');
 const promotionModal = document.getElementById('promotion-modal');
 const promotionOptions = document.getElementById('promotion-options');
 
-// Audio Assets (Base64 for reliability)
-const sounds = {
-    // Short "Pop" for move
-    move: new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA='),
-    // We will use real base64 short sounds below to ensure they play. 
-    // Placeholder empty wavs above for safety if string too long, but let's try a simple beep system or better yet, short encoded beeps.
-    // Actually, simple beeps are better than nothing or broken URLs.
-    // Let's use a specialized function to generate beeps if we want to be ultra-safe, or real base64.
-    // For "Premium" feel, I will use generated oscillator tones if base64 is too large, but standard base64 click sounds are ~5kb.
-    // "Click"
-    move_real: 'data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAG84W0Wj5gKHCew0/gMAAAABwIBAQAA//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAG84W0Wj5gKHCew0/gMAAAABwIBAQAA', // This is just a dummy.
-    // Real implementation: Web Audio API for synthesized premium sounds.
-};
-
-// Premium Synthesized Sounds (Web Audio API)
+// --- Audio System (Web Audio API for Reliability) ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playTone(type) {
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -42,103 +28,52 @@ function playTone(type) {
     const gain = audioCtx.createGain();
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-
     const now = audioCtx.currentTime;
+
+    // Sound Profiles
     if (type === 'move') {
-        osc.frequency.setValueAtTime(800, now);
-        osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        osc.start(now);
-        osc.stop(now + 0.1);
-    } else if (type === 'capture') {
-        osc.frequency.setValueAtTime(1200, now);
-        osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-        osc.start(now);
-        osc.stop(now + 0.15);
-    } else if (type === 'check') {
         osc.frequency.setValueAtTime(600, now);
-        osc.frequency.linearRampToValueAtTime(500, now + 0.1); // Wah-wah
-        osc.frequency.linearRampToValueAtTime(600, now + 0.2);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'capture') {
+        osc.frequency.setValueAtTime(1000, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.start(now); osc.stop(now + 0.15);
+    } else if (type === 'check') {
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.linearRampToValueAtTime(600, now + 0.1);
         gain.gain.setValueAtTime(0.3, now);
         gain.gain.linearRampToValueAtTime(0, now + 0.3);
-        osc.start(now);
-        osc.stop(now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
     } else if (type === 'gameover') {
-        osc.frequency.setValueAtTime(400, now);
-        osc.frequency.exponentialRampToValueAtTime(800, now + 0.4);
-        gain.gain.setValueAtTime(0.5, now);
-        gain.gain.linearRampToValueAtTime(0, now + 0.8);
-        osc.start(now);
-        osc.stop(now + 0.8);
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.linearRampToValueAtTime(600, now + 0.5);
+        gain.gain.setValueAtTime(0.4, now);
+        osc.start(now); osc.stop(now + 1);
     }
 }
 
-// Global Game State
+// --- Game State ---
 let game = new Chess();
 let selectedSquare = null;
 let playerColor = 'w';
 let gameMode = 'player';
-let aiLevel = 3;
-let stockfish = null;
-let isEngineReady = false;
+let aiDifficulty = 3; // 1-5 depth
 let orientation = 'white';
 let whiteTime = 600;
 let blackTime = 600;
 let timerInterval = null;
 
-// Initialize
+// --- Initialization ---
 function init() {
-    initBoard();
-    initStockfish();
     setupEventListeners();
-    updateStatus();
-    renderBoard();
+    startNewGame(); // Start immediately
 }
 
-// SETUP STOCKFISH (Retry Logic & Fallback)
-function initStockfish() {
-    // Attempt to load from a reliable CDN with Cross-Origin workaround
-    const stockfishUrl = 'https://unpkg.com/stockfish@10.0.0/src/stockfish.js'; // Reliable CDN
-
-    try {
-        const blob = new Blob([`importScripts('${stockfishUrl}');`], { type: 'application/javascript' });
-        stockfish = new Worker(URL.createObjectURL(blob));
-
-        stockfish.onmessage = function (event) {
-            const line = event.data;
-            if (line === 'uciok') {
-                isEngineReady = true;
-                console.log("Stockfish Ready.");
-            } else if (line.startsWith('bestmove')) {
-                const move = line.split(' ')[1];
-                makeAiMove(move);
-            }
-        };
-
-        stockfish.onerror = function (e) {
-            console.warn("Stockfish Worker Failed. Using Random Fallback.", e);
-            isEngineReady = false;
-        };
-
-        stockfish.postMessage('uci');
-    } catch (e) {
-        console.warn("Stockfish Init Failed. Using Fallback.");
-        isEngineReady = false;
-    }
-}
-
-function getFallbackMove() {
-    // Simple Minimax or Random if engine fails
-    // For now, random legal move to ensure playability
-    const moves = game.moves();
-    if (moves.length === 0) return null;
-    return moves[Math.floor(Math.random() * moves.length)];
-}
-
-// Setup Event Listeners
 function setupEventListeners() {
     pvpBtn.addEventListener('click', () => setGameMode('player'));
     aiBtn.addEventListener('click', () => setGameMode('ai'));
@@ -163,24 +98,21 @@ function startNewGame() {
     game.reset();
     whiteTime = 600;
     blackTime = 600;
-    orientation = 'white';
     playerColor = 'w';
+    selectedSquare = null;
+    orientation = 'white';
+
     clearInterval(timerInterval);
     timerInterval = setInterval(updateTimer, 1000);
-    playTone('gameover'); // Start sound
 
-    // Resume Audio Context if needed
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-
-    // AI Setup
-    if (gameMode === 'ai' && isEngineReady) {
-        aiLevel = parseInt(aiLevelInput.value);
-        const skill = { 1: 0, 2: 5, 3: 10, 4: 15, 5: 20 }[aiLevel] || 10;
-        stockfish.postMessage(`setoption name Skill Level value ${skill}`);
+    if (gameMode === 'ai') {
+        const level = parseInt(aiLevelInput.value);
+        aiDifficulty = Math.max(1, Math.min(level, 4)); // Cap depth at 4 for JS performance
     }
 
-    updateStatus();
+    playTone('move');
     renderBoard();
+    updateStatus();
     updateHistoryUI();
 }
 
@@ -189,18 +121,7 @@ function flipBoard() {
     renderBoard();
 }
 
-function getPieceIcon(piece) {
-    if (!piece) return '';
-    const urlMap = {
-        'w': { 'p': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg', 'r': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg', 'n': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg', 'b': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg', 'q': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg', 'k': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg' },
-        'b': { 'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg', 'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg', 'n': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg', 'b': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg', 'q': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg', 'k': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg' }
-    };
-    return urlMap[piece.color][piece.type];
-}
-
-// Board Logic
-function initBoard() { renderBoard(); }
-
+// --- Board Logic & Interaction ---
 function renderBoard() {
     boardElement.innerHTML = '';
     const board = game.board();
@@ -213,163 +134,97 @@ function renderBoard() {
             const squareId = String.fromCharCode(97 + col) + (8 - row);
 
             const squareDiv = document.createElement('div');
-            squareDiv.classList.add('square');
-            squareDiv.classList.add((r + c) % 2 === 0 ? 'white' : 'black');
+            squareDiv.className = `square ${(r + c) % 2 === 0 ? 'white' : 'black'}`;
             squareDiv.dataset.square = squareId;
 
+            // Selection Highlight
             if (selectedSquare === squareId) squareDiv.classList.add('selected');
 
-            // King Check Pulse
+            // Last Move Highlight
+            const history = game.history({ verbose: true });
+            if (history.length > 0) {
+                const lastMove = history[history.length - 1];
+                if (lastMove.from === squareId || lastMove.to === squareId) squareDiv.classList.add('last-move');
+            }
+
+            // Check Pulse
             const piece = board[row][col];
             if (piece && piece.type === 'k' && piece.color === game.turn() && game.in_check()) {
                 squareDiv.classList.add('in-check');
             }
 
-            // Piece
+            // Render Piece
             if (piece) {
                 const pieceDiv = document.createElement('div');
-                pieceDiv.classList.add('piece');
+                pieceDiv.className = 'piece';
                 pieceDiv.style.backgroundImage = `url(${getPieceIcon(piece)})`;
-                pieceDiv.draggable = true;
-
-                // Desktop Drag
-                pieceDiv.addEventListener('dragstart', (e) => handleDragStart(e, squareId));
-
-                // Mobile Touch Drag
-                pieceDiv.addEventListener('touchstart', (e) => handleTouchStart(e, squareId));
-                pieceDiv.addEventListener('touchmove', (e) => handleTouchMove(e));
-                pieceDiv.addEventListener('touchend', (e) => handleTouchEnd(e));
-
                 squareDiv.appendChild(pieceDiv);
             }
 
-            squareDiv.addEventListener('dragover', (e) => e.preventDefault());
-            squareDiv.addEventListener('drop', (e) => handleDrop(e, squareId));
-            squareDiv.addEventListener('click', () => handleSquareClick(squareId));
+            // Interaction - Unified Click/Tap Handler
+            squareDiv.addEventListener('click', (e) => handleSquareClick(squareId));
+
+            // Legal Move Hint
+            if (selectedSquare) {
+                const moves = game.moves({ square: selectedSquare, verbose: true });
+                const isLegal = moves.some(m => m.to === squareId);
+                if (isLegal) {
+                    squareDiv.classList.add(game.get(squareId) ? 'capture-hint' : 'highlight');
+                }
+            }
 
             boardElement.appendChild(squareDiv);
         }
     }
 }
 
-// Interaction Handlers
-function handleDragStart(e, sourceSquare) {
-    if (checkInteractionAllowed(sourceSquare)) {
-        selectedSquare = sourceSquare;
-        renderBoard();
-        highlightLegalMoves(sourceSquare);
-        e.dataTransfer.setData('text/plain', sourceSquare);
-    } else {
-        e.preventDefault();
-    }
-}
-
-// Mobile Touch Logic
-let touchSourceSquare = null;
-let activePieceElement = null;
-
-function handleTouchStart(e, sourceSquare) {
-    if (checkInteractionAllowed(sourceSquare)) {
-        e.preventDefault(); // Prevent scroll
-        touchSourceSquare = sourceSquare;
-        selectedSquare = sourceSquare;
-        renderBoard();
-        highlightLegalMoves(sourceSquare);
-
-        // Visual feedback
-        const touch = e.touches[0];
-        activePieceElement = e.target;
-        activePieceElement.style.position = 'absolute';
-        activePieceElement.style.zIndex = '1000';
-        activePieceElement.style.width = '60px'; // Fixed size for varying screens
-        activePieceElement.style.height = '60px';
-        movePieceToTouch(touch);
-    }
-}
-
-function handleTouchMove(e) {
-    if (activePieceElement) {
-        e.preventDefault();
-        movePieceToTouch(e.touches[0]);
-    }
-}
-
-function handleTouchEnd(e) {
-    if (activePieceElement) {
-        activePieceElement.style.position = '';
-        activePieceElement.style.zIndex = '';
-        activePieceElement = null;
-
-        // Determine drop target via coordinates
-        const touch = e.changedTouches[0];
-        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-        const targetSquareDiv = targetElement?.closest('.square');
-
-        if (targetSquareDiv) {
-            const targetSquare = targetSquareDiv.dataset.square;
-            attemptMove(touchSourceSquare, targetSquare);
-        } else {
-            renderBoard(); // Reset
-        }
-        touchSourceSquare = null;
-    }
-}
-
-function movePieceToTouch(touch) {
-    if (activePieceElement) {
-        activePieceElement.style.left = (touch.clientX - 30) + 'px';
-        activePieceElement.style.top = (touch.clientY - 30) + 'px';
-    }
-}
-
-function checkInteractionAllowed(square) {
-    if (game.game_over()) return false;
-    if (gameMode === 'ai' && game.turn() !== playerColor) return false;
-    const piece = game.get(square);
-    return piece && piece.color === game.turn();
-}
-
-function handleDrop(e, targetSquare) {
-    e.preventDefault();
-    const sourceSquare = e.dataTransfer.getData('text/plain');
-    attemptMove(sourceSquare, targetSquare);
+function getPieceIcon(piece) {
+    const urls = {
+        'w': { 'p': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg', 'r': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg', 'n': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg', 'b': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg', 'q': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg', 'k': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg' },
+        'b': { 'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg', 'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg', 'n': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg', 'b': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg', 'q': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg', 'k': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg' }
+    };
+    return urls[piece.color][piece.type];
 }
 
 function handleSquareClick(squareId) {
     if (game.game_over()) return;
+    if (gameMode === 'ai' && game.turn() !== playerColor) return; // Wait for AI
+
     const piece = game.get(squareId);
 
+    // If selecting piece
     if (selectedSquare === null) {
         if (piece && piece.color === game.turn()) {
             selectedSquare = squareId;
             renderBoard();
-            highlightLegalMoves(squareId);
         }
-    } else {
-        if (selectedSquare === squareId) {
-            selectedSquare = null;
+        return;
+    }
+
+    // If unselecting or changing selection
+    if (selectedSquare === squareId) {
+        selectedSquare = null;
+        renderBoard();
+        return;
+    }
+
+    // Attempt move
+    const success = attemptMove(selectedSquare, squareId);
+    if (!success) {
+        // If clicked on own piece, change selection
+        if (piece && piece.color === game.turn()) {
+            selectedSquare = squareId;
             renderBoard();
         } else {
-            const success = attemptMove(selectedSquare, squareId);
-            if (!success) {
-                if (piece && piece.color === game.turn()) {
-                    selectedSquare = squareId;
-                    renderBoard();
-                    highlightLegalMoves(squareId);
-                } else {
-                    selectedSquare = null;
-                    renderBoard();
-                }
-            }
+            selectedSquare = null;
+            renderBoard();
         }
     }
 }
 
 function attemptMove(from, to) {
     const piece = game.get(from);
-    if (!piece) return false; // Safety
-
-    // Pawn Promotion Check
+    // Pawn Promo Check
     if (piece.type === 'p' && ((piece.color === 'w' && to[1] === '8') || (piece.color === 'b' && to[1] === '1'))) {
         showPromotionModal(from, to, piece.color);
         return true;
@@ -381,36 +236,31 @@ function attemptMove(from, to) {
             handleMoveResult(result);
             return true;
         }
-    } catch (e) { return false; }
+    } catch (e) { }
     return false;
 }
 
 function handleMoveResult(move) {
-    if (move.flags.includes('c') || move.flags.includes('e')) playTone('capture');
-    else playTone('move');
-
+    playTone(move.flags.includes('c') ? 'capture' : 'move');
     if (game.in_check()) playTone('check');
 
     selectedSquare = null;
     onMoveMade();
 }
 
-function promote(from, to, promotionPiece) {
-    const result = game.move({ from, to, promotion: promotionPiece });
-    if (result) {
-        playTone('promote');
-        handleMoveResult(result);
-    }
+function promote(from, to, pCode) {
+    const result = game.move({ from, to, promotion: pCode });
+    if (result) handleMoveResult(result);
     promotionModal.classList.add('hidden');
 }
 
 function showPromotionModal(from, to, color) {
     promotionOptions.innerHTML = '';
-    ['q', 'r', 'b', 'n'].forEach(pCode => {
+    ['q', 'r', 'b', 'n'].forEach(p => {
         const img = document.createElement('img');
-        img.src = getPieceIcon({ type: pCode, color });
-        img.classList.add('promo-piece');
-        img.onclick = () => promote(from, to, pCode);
+        img.src = getPieceIcon({ type: p, color });
+        img.className = 'promo-piece';
+        img.onclick = () => promote(from, to, p);
         promotionOptions.appendChild(img);
     });
     promotionModal.classList.remove('hidden');
@@ -426,113 +276,182 @@ function onMoveMade() {
         return;
     }
 
-    // AI Turn
+    // Trigger AI
     if (gameMode === 'ai' && game.turn() !== playerColor) {
-        setTimeout(() => {
-            if (isEngineReady) {
-                stockfish.postMessage(`position fen ${game.fen()}`);
-                stockfish.postMessage(`go depth ${aiLevel * 2}`);
-            } else {
-                // Fallback AI
-                const moveStr = getFallbackMove();
-                if (moveStr) {
-                    game.move(moveStr);
-                    handleMoveResult({ flags: 'n' }); // Simplified fake result for sound
-                }
-            }
-        }, 500);
+        setTimeout(makeMinimaxMove, 100); // 100ms delay for UI repaint
     }
 }
 
-function makeAiMove(bestMove) {
-    const from = bestMove.substring(0, 2);
-    const to = bestMove.substring(2, 4);
-    const promotion = bestMove.length > 4 ? bestMove.substring(4, 5) : undefined;
-
-    const result = game.move({ from, to, promotion });
-    if (result) handleMoveResult(result);
-}
-
-function highlightLegalMoves(square) {
-    const moves = game.moves({ square, verbose: true });
-    moves.forEach(move => {
-        const el = document.querySelector(`[data-square="${move.to}"]`);
-        if (el) el.classList.add(move.flags.includes('c') ? 'capture-hint' : 'highlight');
-    });
-}
-
-function updateStatus() {
-    // ... (Keep existing status logic)
-    let status = '';
-    let tc = '';
-    if (game.in_checkmate()) { status = 'Checkmate!'; }
-    else if (game.in_draw()) { status = 'Draw'; }
-    else {
-        status = game.turn() === 'w' ? "White's Turn" : "Black's Turn";
-        tc = game.turn() === 'w' ? '#ffffff' : '#000000';
-        if (game.in_check()) { status += ' (Check!)'; tc = '#ff0000'; }
-    }
-    statusElement.innerText = status;
-    statusDot.style.backgroundColor = tc;
-}
-
-function updateTimer() {
+// --- Local Minimax AI (Robust & Fast) ---
+function makeMinimaxMove() {
     if (game.game_over()) return;
-    if (game.turn() === 'w') {
-        whiteTime--;
-        whiteTimeElement.innerText = formatTime(whiteTime);
-        if (whiteTime <= 0) endGame('Black wins on time');
+
+    // Use Web Worker idea? No, let's keep it main thread for simplicity and "guaranteed run".
+    // Depth 3 is usually instant in JS.
+    const depth = aiDifficulty;
+    const bestMove = getBestMove(game, depth);
+
+    game.move(bestMove);
+    handleMoveResult({ flags: 'n', ...bestMove }); // Dummy flags since we already moved
+}
+
+// Piece Values
+const pieceValues = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+
+function evaluateBoard(gameInst) {
+    let totalEvaluation = 0;
+    const board = gameInst.board();
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            const piece = board[i][j];
+            if (piece) {
+                const value = pieceValues[piece.type];
+                totalEvaluation += piece.color === 'w' ? value : -value;
+            }
+        }
+    }
+    return totalEvaluation;
+}
+
+function getBestMove(gameInst, depth) {
+    // Generate all moves
+    const moves = gameInst.moves();
+    let bestMove = -9999;
+    let bestMoveFound = moves[0];
+
+    // If no moves, game over
+    if (moves.length === 0) return null;
+
+    // Simple randomization for variety if scores are equal
+    // But for Minimax, just find max.
+
+    for (let i = 0; i < moves.length; i++) {
+        const move = moves[i];
+        gameInst.move(move);
+        const value = minimax(gameInst, depth - 1, -10000, 10000, false);
+        gameInst.undo();
+
+        // AI plays Black usually in this logic (if Player is White)
+        // Adjust for AI Color
+        if (playerColor === 'w') {
+            // AI is Black -> wants to Minimize evaluation
+            if (value <= bestMove) { // Fail, my minimax logic below returns max for white.
+                // Wait. 
+            }
+        }
+    }
+
+    // Re-doing Minimax entry properly
+    // Let's assume AI is ALWAYS Black for now.
+    // So AI wants to Minimize the score. 
+    // BUT common minimax implements "maximizingPlayer" boolean.
+
+    let isMaximizing = (game.turn() === 'w'); // If AI turn is W, it wants max. If B, min.
+
+    if (isMaximizing) {
+        let bestVal = -Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            gameInst.move(moves[i]);
+            let value = minimax(gameInst, depth - 1, -Infinity, Infinity, false);
+            gameInst.undo();
+            if (value > bestVal) { bestVal = value; bestMoveFound = moves[i]; }
+        }
     } else {
-        blackTime--;
-        blackTimeElement.innerText = formatTime(blackTime);
-        if (blackTime <= 0) endGame('White wins on time');
+        let bestVal = Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            gameInst.move(moves[i]);
+            let value = minimax(gameInst, depth - 1, -Infinity, Infinity, true);
+            gameInst.undo();
+            if (value < bestVal) { bestVal = value; bestMoveFound = moves[i]; }
+        }
+    }
+    return bestMoveFound;
+}
+
+function minimax(gameInst, depth, alpha, beta, isMaximizing) {
+    if (depth === 0) return evaluateBoard(gameInst);
+
+    const moves = gameInst.moves();
+    if (moves.length === 0) return evaluateBoard(gameInst); // Checkmate or stalemate
+
+    if (isMaximizing) {
+        let maxEval = -Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            gameInst.move(moves[i]);
+            const eval = minimax(gameInst, depth - 1, alpha, beta, false);
+            gameInst.undo();
+            maxEval = Math.max(maxEval, eval);
+            alpha = Math.max(alpha, eval);
+            if (beta <= alpha) break;
+        }
+        return maxEval;
+    } else {
+        let minEval = Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            gameInst.move(moves[i]);
+            const eval = minimax(gameInst, depth - 1, alpha, beta, true);
+            gameInst.undo();
+            minEval = Math.min(minEval, eval);
+            beta = Math.min(beta, eval);
+            if (beta <= alpha) break;
+        }
+        return minEval;
     }
 }
 
-function formatTime(seconds) {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+// --- UI Helpers ---
+function updateStatus() {
+    let status = game.turn() === 'w' ? "White's Turn" : "Black's Turn";
+    let color = game.turn() === 'w' ? '#fff' : '#000';
+
+    if (game.in_checkmate()) status = "Checkmate!";
+    else if (game.in_draw()) status = "Draw.";
+    else if (game.in_check()) status += " (Check!)";
+
+    statusElement.innerText = status;
+    statusDot.style.backgroundColor = color;
+
+    document.querySelector('.white-timer').classList.toggle('active', game.turn() === 'w');
+    document.querySelector('.black-timer').classList.toggle('active', game.turn() === 'b');
 }
 
 function updateHistoryUI() {
-    const history = game.history({ verbose: true });
     moveHistoryElement.innerHTML = '';
+    const history = game.history();
     for (let i = 0; i < history.length; i += 2) {
-        const moveWhite = history[i];
-        const moveBlack = history[i + 1];
         const row = document.createElement('div');
-        row.classList.add('move-row');
-        row.innerHTML = `<span class="move-num">${Math.floor(i / 2) + 1}.</span><span class="move-white">${moveWhite.san}</span><span class="move-black">${moveBlack ? moveBlack.san : ''}</span>`;
+        row.className = 'move-row';
+        row.innerHTML = `<span class="move-num">${i / 2 + 1}.</span> <span class="move-white">${history[i]}</span> <span class="move-black">${history[i + 1] || ''}</span>`;
         moveHistoryElement.appendChild(row);
     }
     moveHistoryElement.scrollTop = moveHistoryElement.scrollHeight;
 }
 
-function undoMove() {
-    game.undo();
-    if (gameMode === 'ai') game.undo();
-    renderBoard();
-    updateStatus();
-    updateHistoryUI();
+function updateTimer() {
+    if (game.turn() === 'w') {
+        whiteTime--;
+        whiteTimeElement.innerText = formatTime(whiteTime);
+        if (whiteTime <= 0) endGame("Black wins on time");
+    } else {
+        blackTime--;
+        blackTimeElement.innerText = formatTime(blackTime);
+        if (blackTime <= 0) endGame("White wins on time");
+    }
+}
+
+function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const ss = s % 60;
+    return `${m}:${ss < 10 ? '0' : ''}${ss}`;
 }
 
 function endGame(msg) {
-    playTone('gameover');
-    gameOverModal.classList.remove('hidden');
-    if (msg) {
-        gameOverTitle.innerText = "Game Over";
-        gameOverMsg.innerText = msg;
-    } else {
-        if (game.in_checkmate()) {
-            gameOverTitle.innerText = "Checkmate!";
-            gameOverMsg.innerText = game.turn() === 'w' ? "Black Wins!" : "White Wins!";
-        } else if (game.in_draw()) {
-            gameOverTitle.innerText = "Draw!";
-            gameOverMsg.innerText = "Stalemate.";
-        }
-    }
     clearInterval(timerInterval);
+    playTone('gameover');
+    gameOverTitle.innerText = "Game Over";
+    gameOverMsg.innerText = msg || (game.turn() === 'w' ? "Black Wins" : "White Wins");
+    gameOverModal.classList.remove('hidden');
 }
 
+// Start
 init();
