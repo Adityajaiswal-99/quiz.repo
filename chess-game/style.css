@@ -27,18 +27,22 @@ body {
     font-family: var(--font-family);
     background: var(--bg-gradient);
     color: var(--text-main);
-    height: 100vh;
-    overflow: hidden;
-    /* Prevent scroll on full app */
+    min-height: 100vh;
+    /* Allow scrolling */
+    overflow-y: auto;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    /* Align top for long content */
+    padding: 20px 0;
 }
 
 .app-container {
     display: flex;
     width: 95vw;
-    height: 90vh;
+    /* Using min-height to allow expansion */
+    min-height: 90vh;
+    height: auto;
     gap: 20px;
     max-width: 1400px;
 }

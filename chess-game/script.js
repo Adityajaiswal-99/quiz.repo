@@ -107,13 +107,25 @@ function startNewGame() {
 
     if (gameMode === 'ai') {
         const level = parseInt(aiLevelInput.value);
-        aiDifficulty = Math.max(1, Math.min(level, 4)); // Cap depth at 4 for JS performance
+        // Optimize: Cap depth at 3 to prevent freezing on mobile
+        aiDifficulty = Math.max(1, Math.min(level, 3));
     }
 
-    playTone('move');
+    // Safe Audio Resume
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(e => console.log("Audio resume failed:", e));
+    }
+    safePlayTone('move');
+
     renderBoard();
     updateStatus();
     updateHistoryUI();
+}
+
+function safePlayTone(type) {
+    try {
+        playTone(type);
+    } catch (e) { console.warn("Audio error:", e); }
 }
 
 function flipBoard() {
@@ -241,8 +253,8 @@ function attemptMove(from, to) {
 }
 
 function handleMoveResult(move) {
-    playTone(move.flags.includes('c') ? 'capture' : 'move');
-    if (game.in_check()) playTone('check');
+    safePlayTone(move.flags.includes('c') ? 'capture' : 'move');
+    if (game.in_check()) safePlayTone('check');
 
     selectedSquare = null;
     onMoveMade();
@@ -316,37 +328,15 @@ function evaluateBoard(gameInst) {
 function getBestMove(gameInst, depth) {
     // Generate all moves
     const moves = gameInst.moves();
-    let bestMove = -9999;
     let bestMoveFound = moves[0];
 
     // If no moves, game over
     if (moves.length === 0) return null;
 
-    // Simple randomization for variety if scores are equal
-    // But for Minimax, just find max.
-
-    for (let i = 0; i < moves.length; i++) {
-        const move = moves[i];
-        gameInst.move(move);
-        const value = minimax(gameInst, depth - 1, -10000, 10000, false);
-        gameInst.undo();
-
-        // AI plays Black usually in this logic (if Player is White)
-        // Adjust for AI Color
-        if (playerColor === 'w') {
-            // AI is Black -> wants to Minimize evaluation
-            if (value <= bestMove) { // Fail, my minimax logic below returns max for white.
-                // Wait. 
-            }
-        }
-    }
-
-    // Re-doing Minimax entry properly
-    // Let's assume AI is ALWAYS Black for now.
-    // So AI wants to Minimize the score. 
-    // BUT common minimax implements "maximizingPlayer" boolean.
-
-    let isMaximizing = (game.turn() === 'w'); // If AI turn is W, it wants max. If B, min.
+    // AI is minimizing if it plays Black (and Player is White)
+    // Common convention: White = Max, Black = Min
+    // Current Turn Check
+    let isMaximizing = (gameInst.turn() === 'w');
 
     if (isMaximizing) {
         let bestVal = -Infinity;
@@ -447,7 +437,7 @@ function formatTime(s) {
 
 function endGame(msg) {
     clearInterval(timerInterval);
-    playTone('gameover');
+    safePlayTone('gameover');
     gameOverTitle.innerText = "Game Over";
     gameOverMsg.innerText = msg || (game.turn() === 'w' ? "Black Wins" : "White Wins");
     gameOverModal.classList.remove('hidden');
